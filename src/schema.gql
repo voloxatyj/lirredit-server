@@ -2,6 +2,56 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Auth {
+  createdAt: String!
+  email: String!
+  id: Int!
+  password: String!
+  updatedAt: String!
+  username: String!
+}
+
+input CreateUserInput {
+  email: String!
+  password: String!
+  username: String!
+}
+
+type FieldError {
+  field: String!
+  message: String!
+}
+
+type Mutation {
+  create(createUserInput: CreateUserInput!): UserResponse!
+  removeAuth(id: Int!): Auth!
+  removeUser(id: Int!): User!
+  signUp(createAuthInput: CreateUserInput!): UserResponse!
+  updateAuth(updateAuthInput: UpdateUserInput!): Auth!
+  updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
 type Query {
-  getHello: String!
+  user(id: Int!): User!
+}
+
+input UpdateUserInput {
+  email: String
+  id: Int!
+  password: String
+  username: String
+}
+
+type User {
+  createdAt: String!
+  email: String!
+  id: Int!
+  password: String!
+  updatedAt: String!
+  username: String!
+}
+
+type UserResponse {
+  errors: [FieldError!]
+  user: User
 }

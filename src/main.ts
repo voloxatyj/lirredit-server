@@ -7,11 +7,13 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const logger = new Logger('Server Instance');
   const app = await NestFactory.create(AppModule, { cors: true });
+  app.setGlobalPrefix('api');
   const configService = app.get(ConfigService);
   const config = new DocumentBuilder()
+    .addCookieAuth()
     .setTitle('LirRedit')
-    .setDescription('The LirRedit API description')
-    .setVersion('0.1')
+    .setDescription('The LirRedit API Documentation')
+    .setVersion('0.0.1')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
