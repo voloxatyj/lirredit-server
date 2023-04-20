@@ -1,4 +1,4 @@
-FROM node:14
+FROM node:18-alpine As development
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -6,13 +6,15 @@ WORKDIR /usr/src/app
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
-COPY package.json ./
+COPY --chown=node:node package*.json ./
 COPY yarn.lock ./
 
 RUN yarn
 
-COPY . .
+COPY --chown=node:node . .
 COPY .env.production .env
+
+RUN yarn prisma:generate
 
 RUN yarn build
 
