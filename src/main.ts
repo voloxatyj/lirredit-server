@@ -15,6 +15,7 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   const configService = app.get(ConfigService);
+  const __prod__ = configService.get('ENVIRONMENT') === 'production';
 
   /*REDIS*/
   const RedisStore = connectRedis(session);
@@ -41,14 +42,15 @@ async function bootstrap() {
   app.use(
     session({
       name: cookie_name,
-      store: new RedisStore({ client: redisClient as any }) as connectRedis.RedisStore,
+      store: new RedisStore({ client: redisClient as any, disableTouch: true, disableTTL: true }),
       secret: session_secret,
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: false, // if true only transmit cookie over https
-        httpOnly: false, // if true prevent client side JS from reading the cookie
+        secure: __prod__, // if true only transmit cookie over https
+        httpOnly: true, // if true prevent client side JS from reading the cookie
         maxAge: 1000 * 60 * 10, // session max age in miliseconds
+        sameSite: 'lax',
       },
     }),
   );

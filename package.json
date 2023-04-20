@@ -27,6 +27,7 @@
     "@nestjs/common": "^9.0.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/graphql": "^11.0.4",
+    "@nestjs/microservices": "^9.4.0",
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.12.0",
     "@types/redis": "^4.0.11",

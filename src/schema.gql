@@ -11,10 +11,9 @@ type Auth {
   username: String!
 }
 
-input CreateUserInput {
-  email: String!
-  password: String!
-  username: String!
+type AuthResponse {
+  errors: [FieldError!]
+  user: Auth
 }
 
 type FieldError {
@@ -22,17 +21,28 @@ type FieldError {
   message: String!
 }
 
+type FieldErrorUser {
+  field: String!
+  message: String!
+}
+
 type Mutation {
-  create(createUserInput: CreateUserInput!): UserResponse!
+  create: UserResponse!
   removeAuth(id: Int!): Auth!
   removeUser(id: Int!): User!
-  signUp(createAuthInput: CreateUserInput!): UserResponse!
+  signUp(credentials: SignUpInput!): AuthResponse!
   updateAuth(updateAuthInput: UpdateUserInput!): Auth!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
   user(id: Int!): User!
+}
+
+input SignUpInput {
+  email: String!
+  password: String!
+  username: String!
 }
 
 input UpdateUserInput {
@@ -52,6 +62,6 @@ type User {
 }
 
 type UserResponse {
-  errors: [FieldError!]
+  errors: [FieldErrorUser!]
   user: User
 }

@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { User } from '../entities/user.entity';
 
 @ObjectType()
-class FieldError {
+class FieldErrorUser {
   @Field()
   field: string;
   @Field()
@@ -11,8 +11,8 @@ class FieldError {
 
 @ObjectType()
 export class UserResponse {
-  @Field(() => [FieldError], { nullable: true })
-  errors?: FieldError[];
+  @Field(() => [FieldErrorUser], { nullable: true })
+  errors?: FieldErrorUser[];
 
   @Field(() => User, { nullable: true })
   user?: User;
