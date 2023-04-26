@@ -26,17 +26,23 @@ type FieldErrorUser {
   message: String!
 }
 
+input LoginInput {
+  password: String!
+  usernameOrEmail: String!
+}
+
 type Mutation {
   create: UserResponse!
-  removeAuth(id: Int!): Auth!
+  logout: Boolean!
   removeUser(id: Int!): User!
   signUp(credentials: SignUpInput!): AuthResponse!
-  updateAuth(updateAuthInput: UpdateUserInput!): Auth!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
 type Query {
-  user(id: Int!): User!
+  getUser: User
+  login(credentials: LoginInput!): AuthResponse
+  user(email: String!): User!
 }
 
 input SignUpInput {

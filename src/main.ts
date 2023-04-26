@@ -3,16 +3,20 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
+import cookieParser from 'cookie-parser';
 
 import connectRedis from 'connect-redis';
 import session from 'express-session';
 import { createClient } from 'redis';
+import passport from 'passport';
+import { NestExpressApplication } from '@nestjs/platform-express';
 
 async function bootstrap() {
   const logger = new Logger('Server Instance');
-  const app = await NestFactory.create(AppModule, { cors: true });
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.setGlobalPrefix('api');
+  app.enableCors({ origin: ['http://localhost:8000'], credentials: true });
+  app.use(cookieParser());
 
   const configService = app.get(ConfigService);
   const __prod__ = configService.get('ENVIRONMENT') === 'production';
@@ -47,13 +51,14 @@ async function bootstrap() {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: __prod__, // if true only transmit cookie over https
-        httpOnly: true, // if true prevent client side JS from reading the cookie
-        maxAge: 1000 * 60 * 10, // session max age in miliseconds
-        sameSite: 'lax',
+        sameSite: true,
+        httpOnly: !__prod__,
+        maxAge: 86400000,
       },
     }),
   );
+  app.use(passport.initialize());
+  app.use(passport.session());
   /*SWAGGER*/
   const config = new DocumentBuilder()
     .addCookieAuth()

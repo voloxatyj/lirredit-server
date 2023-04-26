@@ -1,4 +1,4 @@
-import { CreateUserInput } from '../user/dto/create-user.input';
+import { CreateUserInput } from '../users/dto/create-user.input';
 
 export const validateRegister = ({ email, password, username }: CreateUserInput) => {
   const isEmail = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}.[a-z]{2,3}');

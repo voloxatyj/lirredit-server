@@ -2,14 +2,17 @@ import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
-// import { PrismaModule } from './prisma/prisma.module';
 import { LoggerMiddleware } from './utils/logger.middleware';
 import { join } from 'path';
-import { UserModule } from './user/user.module';
+import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
+    PrismaModule,
+    PassportModule.register({ session: true }),
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
@@ -18,8 +21,14 @@ import { AuthModule } from './auth/auth.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
+      playground: {
+        settings: {
+          'editor.theme': 'light', // use value dark if you want a dark theme in the playground
+          'request.credentials': 'include',
+        },
+      },
     }),
-    UserModule,
+    UsersModule,
     AuthModule,
   ],
   controllers: [],
