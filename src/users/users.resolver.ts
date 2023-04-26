@@ -18,7 +18,6 @@ export class UsersResolver {
   @UseGuards(AuthGuard)
   @Query(() => User, { nullable: true })
   getUser(@Context() { req }: any) {
-    // you are not logged in
     if (!req.session.userId) {
       return null;
     }

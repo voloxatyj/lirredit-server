@@ -17,7 +17,6 @@ export class AuthSerializer extends PassportSerializer {
     done: (err: Error, user: User) => void,
   ) {
     const userDb = await this.userService.findById(payload.id);
-    Reflect.deleteProperty(userDb, 'password');
     return userDb ? done(null, userDb) : done(null, null);
   }
 }

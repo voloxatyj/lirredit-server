@@ -23,7 +23,7 @@ export class AuthResolver {
     @Args('credentials') credentials: SignUpInput,
     @Context() { req }: any,
   ): Promise<AuthResponse> {
-    return this.authService.create(credentials, req);
+    return this.authService.register(credentials, req);
   }
 
   @UseGuards(AuthGuard)

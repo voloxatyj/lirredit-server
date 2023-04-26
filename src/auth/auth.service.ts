@@ -12,7 +12,8 @@ export class AuthService {
   private logger = new Logger(AuthService.name);
 
   constructor(private prisma: PrismaService, private readonly userService: UsersService) {}
-  async create(credentials: SignUpInput, req: any): Promise<AuthResponse> {
+
+  async register(credentials: SignUpInput, req: any): Promise<AuthResponse> {
     const errors = validateRegister(credentials);
     if (errors) {
       return { errors };
@@ -34,7 +35,10 @@ export class AuthService {
     }
 
     req.session.userId = user.id;
-    return { user };
+
+    return {
+      user,
+    };
   }
 
   async login({ usernameOrEmail, password }: LoginInput, req: any) {
