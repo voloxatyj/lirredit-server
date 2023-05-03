@@ -33,6 +33,7 @@ input LoginInput {
 
 type Mutation {
   create: UserResponse!
+  login(credentials: LoginInput!): AuthResponse
   logout: Boolean!
   removeUser(id: Int!): User!
   signUp(credentials: SignUpInput!): AuthResponse!
@@ -41,7 +42,6 @@ type Mutation {
 
 type Query {
   getUser: User
-  login(credentials: LoginInput!): AuthResponse
   user(email: String!): User!
 }
 

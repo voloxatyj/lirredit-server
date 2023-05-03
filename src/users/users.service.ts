@@ -18,11 +18,13 @@ export class UsersService {
 
   async findOne(usernameOrEmail: string): Promise<User | any> {
     let user = null;
+
     try {
       if (usernameOrEmail.includes('@')) {
         user = await this.prisma.user.findUnique({ where: { email: usernameOrEmail } });
         return user;
       }
+
       user = await this.prisma.user.findUnique({ where: { username: usernameOrEmail } });
       return user;
     } catch (error) {

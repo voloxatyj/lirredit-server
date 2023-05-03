@@ -15,12 +15,14 @@ export class AuthService {
 
   async register(credentials: SignUpInput, req: any): Promise<AuthResponse> {
     const errors = validateRegister(credentials);
+
     if (errors) {
       return { errors };
     }
 
     const hashedPassword = await argon2.hash(credentials.password);
     let user = null;
+
     try {
       user = await this.prisma.user.create({
         data: {
@@ -30,6 +32,17 @@ export class AuthService {
         },
       });
     } catch (error) {
+      if (error.code === 'P2002') {
+        return {
+          errors: [
+            {
+              field: error.meta.target[0],
+              message: `${error.meta.target[0]} already taken`,
+            },
+          ],
+        };
+      }
+
       this.logger.error(`Failed to create user`, error.stack);
       throw new InternalServerErrorException();
     }
@@ -43,6 +56,7 @@ export class AuthService {
 
   async login({ usernameOrEmail, password }: LoginInput, req: any) {
     let user = null;
+
     try {
       if (usernameOrEmail.includes('@')) {
         user = await this.prisma.user.findUnique({ where: { email: usernameOrEmail } });
@@ -64,6 +78,7 @@ export class AuthService {
         ],
       };
     }
+
     const valid = await argon2.verify(user.password, password);
 
     if (!valid) {

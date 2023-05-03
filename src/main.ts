@@ -15,7 +15,7 @@ async function bootstrap() {
   const logger = new Logger('Server Instance');
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  app.enableCors({ origin: ['http://localhost:8000'], credentials: true });
+  app.enableCors({ origin: ['http://localhost:3000'], credentials: true });
   app.use(cookieParser());
 
   const configService = app.get(ConfigService);
@@ -37,7 +37,7 @@ async function bootstrap() {
                     ##################################################
     `),
     )
-    .catch(err => logger.error('Could not establish a connection with redis. ' + err));
+    .catch(err => logger.error(`Could not establish a connection with redis. ${err}`));
 
   /*SESSIONS*/
   const session_secret: string = configService.get('SESSION_SECRET');

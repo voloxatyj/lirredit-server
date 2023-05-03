@@ -1,4 +1,4 @@
-import { Resolver, Mutation, Args, Context, Query } from '@nestjs/graphql';
+import { Resolver, Mutation, Args, Context } from '@nestjs/graphql';
 import { Auth } from './entities/auth.entity';
 import { AuthResponse } from './dto/response-auth';
 import { SignUpInput } from './dto/sign-up.input';
@@ -17,8 +17,8 @@ export class AuthResolver {
     private readonly configService: ConfigService,
   ) {}
 
-  @Mutation(() => AuthResponse)
   @UseGuards(AuthGuard)
+  @Mutation(() => AuthResponse)
   async signUp(
     @Args('credentials') credentials: SignUpInput,
     @Context() { req }: any,
@@ -27,7 +27,7 @@ export class AuthResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Query(() => AuthResponse, { nullable: true })
+  @Mutation(() => AuthResponse, { nullable: true })
   async login(
     @Args('credentials') credentials: LoginInput,
     @Context() { req }: any,
@@ -40,6 +40,7 @@ export class AuthResolver {
     return new Promise(resolve =>
       req.session.destroy((err: any) => {
         res.clearCookie(this.configService.get('COOKIE_NAME'));
+
         if (err) {
           this.logger.error(err);
           resolve(false);
