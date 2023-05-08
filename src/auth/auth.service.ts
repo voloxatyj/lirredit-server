@@ -2,10 +2,10 @@ import * as argon2 from 'argon2';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { validateRegister } from 'src/utils/validation';
-import { AuthResponse } from './dto/response-auth';
 import { SignUpInput } from './dto/sign-up.input';
 import { LoginInput } from './dto/login.input';
 import { UsersService } from 'src/users/users.service';
+import { UserResponse } from 'src/users/dto/response-user';
 
 @Injectable()
 export class AuthService {
@@ -13,7 +13,7 @@ export class AuthService {
 
   constructor(private prisma: PrismaService, private readonly userService: UsersService) {}
 
-  async register(credentials: SignUpInput, req: any): Promise<AuthResponse> {
+  async register(credentials: SignUpInput, req: any): Promise<UserResponse> {
     const errors = validateRegister(credentials);
 
     if (errors) {

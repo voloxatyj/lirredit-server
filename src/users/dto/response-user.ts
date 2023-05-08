@@ -4,16 +4,16 @@ import { User } from '../entities/user.entity';
 @ObjectType()
 class FieldErrorUser {
   @Field()
-  field: string;
+    field: string;
   @Field()
-  message: string;
+    message: string;
 }
 
 @ObjectType()
 export class UserResponse {
   @Field(() => [FieldErrorUser], { nullable: true })
-  errors?: FieldErrorUser[];
+    errors?: FieldErrorUser[];
 
   @Field(() => User, { nullable: true })
-  user?: User;
+    user?: User;
 }

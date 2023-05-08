@@ -1,14 +1,14 @@
 import { Resolver, Mutation, Args, Context } from '@nestjs/graphql';
-import { Auth } from './entities/auth.entity';
-import { AuthResponse } from './dto/response-auth';
 import { SignUpInput } from './dto/sign-up.input';
 import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { LoginInput } from './dto/login.input';
 import { Logger, UseGuards } from '@nestjs/common';
 import { AuthGuard } from './utils/auth.guard';
+import { UserResponse } from 'src/users/dto/response-user';
+import { User } from 'src/users/entities/user.entity';
 
-@Resolver(Auth)
+@Resolver(User)
 export class AuthResolver {
   private logger = new Logger(AuthResolver.name);
 
@@ -18,26 +18,26 @@ export class AuthResolver {
   ) {}
 
   @UseGuards(AuthGuard)
-  @Mutation(() => AuthResponse)
+  @Mutation(() => UserResponse)
   async signUp(
     @Args('credentials') credentials: SignUpInput,
     @Context() { req }: any,
-  ): Promise<AuthResponse> {
+  ): Promise<UserResponse> {
     return this.authService.register(credentials, req);
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(() => AuthResponse, { nullable: true })
+  @Mutation(() => UserResponse, { nullable: true })
   async login(
     @Args('credentials') credentials: LoginInput,
     @Context() { req }: any,
-  ): Promise<AuthResponse> {
+  ): Promise<UserResponse> {
     return this.authService.login(credentials, req);
   }
 
   @Mutation(() => Boolean)
   async logout(@Context() { req, res }: any) {
-    return new Promise(resolve =>
+    return new Promise((resolve) =>
       req.session.destroy((err: any) => {
         res.clearCookie(this.configService.get('COOKIE_NAME'));
 

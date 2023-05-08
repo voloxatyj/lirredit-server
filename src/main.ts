@@ -37,7 +37,7 @@ async function bootstrap() {
                     ##################################################
     `),
     )
-    .catch(err => logger.error(`Could not establish a connection with redis. ${err}`));
+    .catch((err) => logger.error(`Could not establish a connection with redis. ${err}`));
 
   /*SESSIONS*/
   const session_secret: string = configService.get('SESSION_SECRET');
@@ -82,8 +82,8 @@ async function bootstrap() {
     logger.log(`
           ############################################################################
                   🚀[server]: Server is up and running @ ${configService.get(
-                    'PROTOCOL',
-                  )}://${configService.get('HOST')}:${configService.get('PORT')}
+    'PROTOCOL',
+  )}://${configService.get('HOST')}:${configService.get('PORT')}
           ############################################################################
     `);
   });

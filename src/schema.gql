@@ -2,25 +2,6 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type Auth {
-  createdAt: String!
-  email: String!
-  id: Int!
-  password: String!
-  updatedAt: String!
-  username: String!
-}
-
-type AuthResponse {
-  errors: [FieldError!]
-  user: Auth
-}
-
-type FieldError {
-  field: String!
-  message: String!
-}
-
 type FieldErrorUser {
   field: String!
   message: String!
@@ -33,10 +14,10 @@ input LoginInput {
 
 type Mutation {
   create: UserResponse!
-  login(credentials: LoginInput!): AuthResponse
+  login(credentials: LoginInput!): UserResponse
   logout: Boolean!
   removeUser(id: Int!): User!
-  signUp(credentials: SignUpInput!): AuthResponse!
+  signUp(credentials: SignUpInput!): UserResponse!
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
