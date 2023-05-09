@@ -21,6 +21,10 @@ import { PassportModule } from '@nestjs/passport';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
+      context: ({ req, res }) => ({
+        req,
+        res,
+      }),
       playground: {
         settings: {
           'editor.theme': 'light', // use value dark if you want a dark theme in the playground

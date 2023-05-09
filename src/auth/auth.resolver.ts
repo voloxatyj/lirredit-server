@@ -7,6 +7,7 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { AuthGuard } from './utils/auth.guard';
 import { UserResponse } from 'src/users/dto/response-user';
 import { User } from 'src/users/entities/user.entity';
+import { MyContext } from 'src/utils/types';
 
 @Resolver(User)
 export class AuthResolver {
@@ -21,7 +22,7 @@ export class AuthResolver {
   @Mutation(() => UserResponse)
   async signUp(
     @Args('credentials') credentials: SignUpInput,
-    @Context() { req }: any,
+    @Context() { req }: MyContext,
   ): Promise<UserResponse> {
     return this.authService.register(credentials, req);
   }
@@ -30,15 +31,16 @@ export class AuthResolver {
   @Mutation(() => UserResponse, { nullable: true })
   async login(
     @Args('credentials') credentials: LoginInput,
-    @Context() { req }: any,
+    @Context() { req }: MyContext,
   ): Promise<UserResponse> {
     return this.authService.login(credentials, req);
   }
 
   @Mutation(() => Boolean)
-  async logout(@Context() { req, res }: any) {
+  async logout(@Context() { req, res, redis }: MyContext) {
     return new Promise((resolve) =>
-      req.session.destroy((err: any) => {
+      req.session.destroy((err: unknown) => {
+        console.log(req, res, redis);
         res.clearCookie(this.configService.get('COOKIE_NAME'));
 
         if (err) {
