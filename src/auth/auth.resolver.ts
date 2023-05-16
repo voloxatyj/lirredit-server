@@ -1,13 +1,14 @@
-import { Resolver, Mutation, Args, Context } from '@nestjs/graphql';
-import { SignUpInput } from './dto/sign-up.input';
-import { AuthService } from './auth.service';
-import { ConfigService } from '@nestjs/config';
-import { LoginInput } from './dto/login.input';
 import { Logger, UseGuards } from '@nestjs/common';
-import { AuthGuard } from './utils/auth.guard';
+import { ConfigService } from '@nestjs/config';
+import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { UserResponse } from 'src/users/dto/response-user';
 import { User } from 'src/users/entities/user.entity';
 import { MyContext } from 'src/utils/types';
+import { AuthService } from './auth.service';
+import { LoginInput } from './dto/login.input';
+import { PasswordAuthResponse } from './dto/response-auth-password';
+import { SignUpInput } from './dto/sign-up.input';
+import { AuthGuard } from './utils/auth.guard';
 
 @Resolver(User)
 export class AuthResolver {
@@ -37,10 +38,9 @@ export class AuthResolver {
   }
 
   @Mutation(() => Boolean)
-  async logout(@Context() { req, res, redis }: MyContext) {
-    return new Promise((resolve) =>
+  async logout(@Context() { req, res }: MyContext) {
+    return new Promise(resolve =>
       req.session.destroy((err: unknown) => {
-        console.log(req, res, redis);
         res.clearCookie(this.configService.get('COOKIE_NAME'));
 
         if (err) {
@@ -52,5 +52,11 @@ export class AuthResolver {
         resolve(true);
       }),
     );
+  }
+
+  @UseGuards(AuthGuard)
+  @Mutation(() => PasswordAuthResponse)
+  async forgotPassword(@Args('email') email: string): Promise<PasswordAuthResponse> {
+    return this.authService.forgotPassword(email);
   }
 }

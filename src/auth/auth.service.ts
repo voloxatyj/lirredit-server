@@ -1,17 +1,27 @@
-import * as argon2 from 'argon2';
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+
+import * as argon2 from 'argon2';
+import { uuid } from 'uuidv4';
+
 import { PrismaService } from 'src/prisma/prisma.service';
-import { validateRegister } from 'src/utils/validation';
-import { SignUpInput } from './dto/sign-up.input';
-import { LoginInput } from './dto/login.input';
-import { UsersService } from 'src/users/users.service';
 import { UserResponse } from 'src/users/dto/response-user';
+import { UsersService } from 'src/users/users.service';
+import { validateEmail, validateRegister } from 'src/utils/validation';
+import { LoginInput } from './dto/login.input';
+import { PasswordAuthResponse } from './dto/response-auth-password';
+import { SignUpInput } from './dto/sign-up.input';
+import { sendEmail } from 'src/utils/sendEmai';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   private logger = new Logger(AuthService.name);
 
-  constructor(private prisma: PrismaService, private readonly userService: UsersService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly userService: UsersService,
+    private configService: ConfigService
+  ) {}
 
   async register(credentials: SignUpInput, req: any): Promise<UserResponse> {
     const errors = validateRegister(credentials);
@@ -103,5 +113,57 @@ export class AuthService {
     const user = await this.userService.findOne(usernameOrEmail);
     const result = await argon2.verify(password, user.password);
     return result;
+  }
+
+  async forgotPassword(email: string): Promise<PasswordAuthResponse> {
+    const is_email_valid = validateEmail({ email });
+
+    if (is_email_valid) {
+      return {
+        errors: is_email_valid,
+        success: false,
+      };
+    }
+
+    const token = uuid();
+    const clientURL = `${this.configService.get('CLIENT_PROTOCOL')}://${this.configService.get(
+      'CLIENT_HOST',
+    )}:${this.configService.get('CLIENT_PORT')}`;
+
+    try {
+      const user = await this.prisma.user.update({
+        where: { email },
+        data: { token },
+      });
+
+
+      const link = `${clientURL}/passwordReset/${token}`;
+
+      if (user) {
+        sendEmail(
+          email,
+          'Password Reset Request',
+          {
+            name: user.username,
+            link,
+          },
+          './template/requestResetPassword.handlebars',
+        );
+        return { success: true };
+      }
+
+      return {
+        errors: [
+          {
+            field: 'email',
+            message: "can't find such email",
+          },
+        ],
+        success: false,
+      };
+    } catch (error) {
+      this.logger.error(`Failed to send forgotPassword message`, error.stack);
+      throw new InternalServerErrorException();
+    }
   }
 }

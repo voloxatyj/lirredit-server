@@ -2,7 +2,7 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
-type FieldErrorUser {
+type FieldError {
   field: String!
   message: String!
 }
@@ -14,11 +14,17 @@ input LoginInput {
 
 type Mutation {
   create: UserResponse!
+  forgotPassword(email: String!): PasswordAuthResponse!
   login(credentials: LoginInput!): UserResponse
   logout: Boolean!
   removeUser(id: Int!): User!
   signUp(credentials: SignUpInput!): UserResponse!
   updateUser(updateUserInput: UpdateUserInput!): User!
+}
+
+type PasswordAuthResponse {
+  errors: [FieldError!]
+  success: Boolean!
 }
 
 type Query {
@@ -49,6 +55,6 @@ type User {
 }
 
 type UserResponse {
-  errors: [FieldErrorUser!]
+  errors: [FieldError!]
   user: User
 }

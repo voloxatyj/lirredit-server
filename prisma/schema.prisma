@@ -21,6 +21,7 @@ model User {
   username  String   @unique
   email     String   @unique
   password  String   @db.VarChar(255)
+  token     String?  @db.VarChar(255)
   role      Role     @default(USER)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
