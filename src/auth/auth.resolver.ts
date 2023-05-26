@@ -5,6 +5,7 @@ import { UserResponse } from 'src/users/dto/response-user';
 import { User } from 'src/users/entities/user.entity';
 import { MyContext } from 'src/utils/types';
 import { AuthService } from './auth.service';
+import { ChangePasswordInput } from './dto/change-password.input';
 import { LoginInput } from './dto/login.input';
 import { PasswordAuthResponse } from './dto/response-auth-password';
 import { SignUpInput } from './dto/sign-up.input';
@@ -58,5 +59,14 @@ export class AuthResolver {
   @Mutation(() => PasswordAuthResponse)
   async forgotPassword(@Args('email') email: string): Promise<PasswordAuthResponse> {
     return this.authService.forgotPassword(email);
+  }
+
+  @UseGuards(AuthGuard)
+  @Mutation(() => UserResponse)
+  async changePassword(
+    @Args('credentials') credentials: ChangePasswordInput,
+    @Context() { req }: MyContext,
+  ): Promise<UserResponse> {
+    return this.authService.changePassword(credentials, req);
   }
 }

@@ -1,17 +1,20 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
 import * as argon2 from 'argon2';
-import { uuid } from 'uuidv4';
+import { v4 as uuidv4 } from 'uuid';
 
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UserResponse } from 'src/users/dto/response-user';
 import { UsersService } from 'src/users/users.service';
-import { validateEmail, validateRegister } from 'src/utils/validation';
+import { sendEmail } from 'src/utils/sendEmai';
+import { validateEmail, validatePassword, validateRegister } from 'src/utils/validation';
+import { ChangePasswordInput } from './dto/change-password.input';
 import { LoginInput } from './dto/login.input';
 import { PasswordAuthResponse } from './dto/response-auth-password';
 import { SignUpInput } from './dto/sign-up.input';
-import { sendEmail } from 'src/utils/sendEmai';
-import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
+import { hashingPassword } from 'src/utils/helpers';
 
 @Injectable()
 export class AuthService {
@@ -20,21 +23,21 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private readonly userService: UsersService,
-    private configService: ConfigService
+    private config: ConfigService,
   ) {}
 
-  async register(credentials: SignUpInput, req: any): Promise<UserResponse> {
+  async register(credentials: SignUpInput, req: Request): Promise<UserResponse> {
     const errors = validateRegister(credentials);
 
     if (errors) {
       return { errors };
     }
 
-    const hashedPassword = await argon2.hash(credentials.password);
+    const hashedPassword = await hashingPassword(credentials.password);
     let user = null;
 
     try {
-      user = await this.prisma.user.create({
+      user = await this.prisma.users.create({
         data: {
           email: credentials.email,
           username: credentials.username,
@@ -64,15 +67,15 @@ export class AuthService {
     };
   }
 
-  async login({ usernameOrEmail, password }: LoginInput, req: any) {
+  async login({ usernameOrEmail, password }: LoginInput, req: Request) {
     let user = null;
 
     try {
-      if (usernameOrEmail.includes('@')) {
-        user = await this.prisma.user.findUnique({ where: { email: usernameOrEmail } });
-      } else {
-        user = await this.prisma.user.findUnique({ where: { username: usernameOrEmail } });
-      }
+      user = await this.prisma.users.findFirst({
+        where: usernameOrEmail.includes('@')
+          ? { email: usernameOrEmail }
+          : { username: usernameOrEmail },
+      });
     } catch (error) {
       this.logger.error(`Failed to login`, error.stack);
       throw new InternalServerErrorException();
@@ -125,17 +128,16 @@ export class AuthService {
       };
     }
 
-    const token = uuid();
-    const clientURL = `${this.configService.get('CLIENT_PROTOCOL')}://${this.configService.get(
+    const token = uuidv4();
+    const clientURL = `${this.config.get('CLIENT_PROTOCOL')}://${this.config.get(
       'CLIENT_HOST',
-    )}:${this.configService.get('CLIENT_PORT')}`;
+    )}:${this.config.get('CLIENT_PORT')}`;
 
     try {
-      const user = await this.prisma.user.update({
+      const user = await this.prisma.users.update({
         where: { email },
         data: { token },
       });
-
 
       const link = `${clientURL}/passwordReset/${token}`;
 
@@ -163,6 +165,52 @@ export class AuthService {
       };
     } catch (error) {
       this.logger.error(`Failed to send forgotPassword message`, error.stack);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async changePassword({ password, token }: ChangePasswordInput, req: any): Promise<UserResponse> {
+    try {
+      const user = await this.prisma.users.findUnique({ where: { token } });
+
+      if (!user) {
+        return {
+          errors: [
+            {
+              field: 'token',
+              message: 'token expired',
+            },
+          ],
+        };
+      }
+
+      const is_password_not_valide = validatePassword({ password });
+
+      if (is_password_not_valide) {
+        return { errors: is_password_not_valide };
+      }
+
+      const hashedPassword = await hashingPassword(password);
+
+      await this.prisma.users.update({
+        where: { id: user.id },
+        data: { password: hashedPassword, token: null },
+      });
+
+      sendEmail(
+        user.email,
+        'Password Changed Successfully',
+        {
+          name: user.username,
+        },
+        './template/resetPassword.handlebars',
+      );
+
+      req.session.userId = user.id;
+
+      return { user };
+    } catch (error) {
+      this.logger.error(`Failed to change password`, error.stack);
       throw new InternalServerErrorException();
     }
   }
