@@ -2,6 +2,11 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+input ChangePasswordInput {
+  password: String!
+  token: String!
+}
+
 type FieldError {
   field: String!
   message: String!
@@ -13,6 +18,7 @@ input LoginInput {
 }
 
 type Mutation {
+  changePassword(credentials: ChangePasswordInput!): UserResponse!
   create: UserResponse!
   forgotPassword(email: String!): PasswordAuthResponse!
   login(credentials: LoginInput!): UserResponse

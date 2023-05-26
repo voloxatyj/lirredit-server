@@ -1,4 +1,5 @@
 import { CreateUserInput } from '../users/dto/create-user.input';
+import { FieldError } from './types';
 
 export const validateRegister = ({ email, password, username }: CreateUserInput) => {
   if (username.length === 0) {
@@ -35,7 +36,7 @@ export const validateRegister = ({ email, password, username }: CreateUserInput)
   return valide;
 };
 
-export const validatePassword = ({ password }: Partial<CreateUserInput>) => {
+export const validatePassword = ({ password }: Partial<CreateUserInput>): FieldError[] => {
   if (password.length === 0) {
     return [
       {
@@ -60,7 +61,7 @@ export const validatePassword = ({ password }: Partial<CreateUserInput>) => {
   return null;
 };
 
-export const validateEmail = ({ email }: Partial<CreateUserInput>) => {
+export const validateEmail = ({ email }: Partial<CreateUserInput>): FieldError[] => {
   if (email.length === 0) {
     return [
       {

@@ -9,7 +9,7 @@ export class UsersService {
 
   constructor(private prisma: PrismaService) {}
   async findById(id: number) {
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.users.findUnique({ where: { id } });
   }
 
   findAll() {
@@ -17,15 +17,12 @@ export class UsersService {
   }
 
   async findOne(usernameOrEmail: string): Promise<User | any> {
-    let user = null;
-
     try {
-      if (usernameOrEmail.includes('@')) {
-        user = await this.prisma.user.findUnique({ where: { email: usernameOrEmail } });
-        return user;
-      }
-
-      user = await this.prisma.user.findUnique({ where: { username: usernameOrEmail } });
+      const user = await this.prisma.users.findFirst({
+        where: usernameOrEmail.includes('@')
+          ? { email: usernameOrEmail }
+          : { username: usernameOrEmail },
+      });
       return user;
     } catch (error) {
       this.logger.error(`Failed to login`, error.stack);
