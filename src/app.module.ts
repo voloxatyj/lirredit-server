@@ -21,7 +21,7 @@ import { PassportModule } from '@nestjs/passport';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      context: ({ req, res }) => ({
+      context: ({ req, res }: { req: Request, res: Response }) => ({
         req,
         res,
       }),
