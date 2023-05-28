@@ -1,12 +1,55 @@
 import { INestApplication, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
+import { Prisma, PrismaClient } from '@prisma/client';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit {
+export class PrismaService
+  extends PrismaClient<Prisma.PrismaClientOptions, Prisma.LogLevel>
+  implements OnModuleInit {
   private logger = new Logger(PrismaService.name);
+
+  constructor(private config: ConfigService) {
+    super({
+      log: [
+        {
+          emit: 'event',
+          level: 'query',
+        },
+        {
+          emit: 'event',
+          level: 'error',
+        },
+        {
+          emit: 'event',
+          level: 'info',
+        },
+        {
+          emit: 'event',
+          level: 'warn',
+        },
+      ],
+    });
+  }
 
   async onModuleInit() {
     try {
+      const __prod__ = this.config.get('ENVIRONMENT') === 'production';
+
+      if (!__prod__) {
+        this.$on('error', (event) => {
+          this.logger.error(event);
+        });
+        this.$on('warn', (event) => {
+          this.logger.warn(event);
+        });
+        this.$on('info', (event) => {
+          this.logger.verbose(event);
+        });
+        this.$on('query', (event) => {
+          this.logger.log(event);
+        });
+      }
+
       await this.$connect();
       this.logger.log(`
                ################################################################
