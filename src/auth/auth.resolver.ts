@@ -30,7 +30,7 @@ export class AuthResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(() => UserResponse, { nullable: true })
+  @Mutation(() => UserResponse)
   async login(
     @Args('credentials') credentials: LoginInput,
     @Context() { req }: MyContext,
