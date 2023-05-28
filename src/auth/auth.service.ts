@@ -1,6 +1,5 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 
-import * as argon2 from 'argon2';
 import { v4 as uuidv4 } from 'uuid';
 
 import { ConfigService } from '@nestjs/config';
@@ -14,7 +13,7 @@ import { LoginInput } from './dto/login.input';
 import { PasswordAuthResponse } from './dto/response-auth-password';
 import { SignUpInput } from './dto/sign-up.input';
 import { Request } from 'express';
-import { hashingPassword } from 'src/utils/helpers';
+import { hashingPassword, verifyingPassword } from 'src/utils/helpers';
 
 @Injectable()
 export class AuthService {
@@ -67,7 +66,7 @@ export class AuthService {
     };
   }
 
-  async login({ usernameOrEmail, password }: LoginInput, req: Request) {
+  async login({ usernameOrEmail, password }: LoginInput, req: Request): Promise<UserResponse> {
     let user = null;
 
     try {
@@ -92,7 +91,7 @@ export class AuthService {
       };
     }
 
-    const valid = await argon2.verify(user.password, password);
+    const valid = await verifyingPassword(user.password, password);
 
     if (!valid) {
       return {
@@ -114,7 +113,7 @@ export class AuthService {
 
   async validateUser({ usernameOrEmail, password }: LoginInput) {
     const user = await this.userService.findOne(usernameOrEmail);
-    const result = await argon2.verify(password, user.password);
+    const result = await verifyingPassword(password, user.password);
     return result;
   }
 
