@@ -3,17 +3,14 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import { v4 as uuidv4 } from 'uuid';
 
 import { ConfigService } from '@nestjs/config';
+import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { UserResponse } from 'src/users/dto/response-user';
+import { ChangePasswordInput, LoginInput, SignUpInput } from 'src/types/request';
+import { PasswordAuthResponse, UserResponse } from 'src/types/response';
 import { UsersService } from 'src/users/users.service';
+import { hashingPassword, verifyingPassword } from 'src/utils/helpers';
 import { sendEmail } from 'src/utils/sendEmai';
 import { validateEmail, validatePassword, validateRegister } from 'src/utils/validation';
-import { ChangePasswordInput } from './dto/change-password.input';
-import { LoginInput } from './dto/login.input';
-import { PasswordAuthResponse } from './dto/response-auth-password';
-import { SignUpInput } from './dto/sign-up.input';
-import { Request } from 'express';
-import { hashingPassword, verifyingPassword } from 'src/utils/helpers';
 
 @Injectable()
 export class AuthService {

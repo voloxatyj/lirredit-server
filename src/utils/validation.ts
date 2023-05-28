@@ -1,5 +1,5 @@
-import { CreateUserInput } from '../users/dto/create-user.input';
-import { FieldError } from './types';
+import { CreateUserInput } from 'src/types/request';
+import { FieldError } from 'src/types/general';
 
 export const validateRegister = ({ email, password, username }: CreateUserInput) => {
   if (username.length === 0) {

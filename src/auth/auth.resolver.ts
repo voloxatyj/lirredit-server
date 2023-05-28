@@ -1,15 +1,11 @@
 import { Logger, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-import { UserResponse } from 'src/users/dto/response-user';
-import { User } from 'src/users/entities/user.entity';
-import { MyContext } from 'src/utils/types';
+import { MyContext, User } from 'src/types/general';
+import { ChangePasswordInput, LoginInput, SignUpInput } from 'src/types/request';
+import { PasswordAuthResponse, UserResponse } from 'src/types/response';
+import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { AuthService } from './auth.service';
-import { ChangePasswordInput } from './dto/change-password.input';
-import { LoginInput } from './dto/login.input';
-import { PasswordAuthResponse } from './dto/response-auth-password';
-import { SignUpInput } from './dto/sign-up.input';
-import { AuthGuard } from './utils/auth.guard';
 
 @Resolver(User)
 export class AuthResolver {

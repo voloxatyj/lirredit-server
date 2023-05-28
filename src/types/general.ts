@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, Int } from '@nestjs/graphql';
 import { Request, Response } from 'express';
 import { Session, SessionData } from 'express-session';
 
@@ -21,4 +21,22 @@ export class FieldError {
     field: string;
   @Field()
     message: string;
+}
+
+@ObjectType()
+export class User {
+  @Field(() => Int)
+    id: number;
+
+  @Field()
+    username!: string;
+
+  @Field()
+    email!: string;
+
+  @Field(() => String)
+    createdAt: Date;
+
+  @Field(() => String)
+    updatedAt: Date;
 }
