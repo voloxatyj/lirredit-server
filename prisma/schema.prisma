@@ -7,7 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Users {
+model User {
   id        Int      @id @unique @default(autoincrement())
   username  String   @unique
   email     String   @unique
@@ -16,32 +16,35 @@ model Users {
   updatedAt DateTime @updatedAt
   role      Role     @default(USER)
   token     String?  @unique
-  posts     Posts[]
-  updoots   Updoots[]
+  posts     Post[]
+  updoots   Updoot[]
+
   @@map("users")
 }
 
-model Posts {
+model Post {
   id         Int      @id @unique @default(autoincrement())
   title      String   @db.VarChar(255)
-  text       String   @db.VarChar(255)
+  text       String   @db.VarChar(1500)
   points     Int      @default(0)
   voteStatus Int?
   userId     Int
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-  users      Users    @relation(fields: [userId], references: [id])
-  updoots    Updoots[]
+  users      User     @relation(fields: [userId], references: [id])
+  updoots    Updoot[]
+
   @@map("posts")
 }
 
-model Updoots {
-  id     Int   @id @unique @default(autoincrement())
+model Updoot {
+  id     Int  @id @unique @default(autoincrement())
   value  Int
   userId Int
   postId Int
-  posts  Posts @relation(fields: [postId], references: [id])
-  users  Users @relation(fields: [userId], references: [id])
+  posts  Post @relation(fields: [postId], references: [id])
+  users  User @relation(fields: [userId], references: [id])
+
   @@map("updoots")
 }
 

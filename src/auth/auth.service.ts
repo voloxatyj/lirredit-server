@@ -33,7 +33,7 @@ export class AuthService {
     let user = null;
 
     try {
-      user = await this.prisma.users.create({
+      user = await this.prisma.user.create({
         data: {
           email: credentials.email,
           username: credentials.username,
@@ -67,7 +67,7 @@ export class AuthService {
     let user = null;
 
     try {
-      user = await this.prisma.users.findFirst({
+      user = await this.prisma.user.findFirst({
         where: usernameOrEmail.includes('@')
           ? { email: usernameOrEmail }
           : { username: usernameOrEmail },
@@ -130,7 +130,7 @@ export class AuthService {
     )}:${this.config.get('CLIENT_PORT')}`;
 
     try {
-      const user = await this.prisma.users.update({
+      const user = await this.prisma.user.update({
         where: { email },
         data: { token },
       });
@@ -167,7 +167,7 @@ export class AuthService {
 
   async changePassword({ password, token }: ChangePasswordInput, req: any): Promise<UserResponse> {
     try {
-      const user = await this.prisma.users.findUnique({ where: { token } });
+      const user = await this.prisma.user.findUnique({ where: { token } });
 
       if (!user) {
         return {
@@ -188,7 +188,7 @@ export class AuthService {
 
       const hashedPassword = await hashingPassword(password);
 
-      await this.prisma.users.update({
+      await this.prisma.user.update({
         where: { id: user.id },
         data: { password: hashedPassword, token: null },
       });

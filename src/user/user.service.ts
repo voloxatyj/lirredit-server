@@ -9,7 +9,7 @@ export class UserService {
 
   constructor(private prisma: PrismaService) {}
   async findById(id: number) {
-    return this.prisma.users.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({ where: { id } });
   }
 
   findAll() {
@@ -18,7 +18,7 @@ export class UserService {
 
   async findOne(usernameOrEmail: string): Promise<User | any> {
     try {
-      const user = await this.prisma.users.findFirst({
+      const user = await this.prisma.user.findFirst({
         where: usernameOrEmail.includes('@')
           ? { email: usernameOrEmail }
           : { username: usernameOrEmail },

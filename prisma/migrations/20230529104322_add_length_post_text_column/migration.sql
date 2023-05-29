@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "posts" ALTER COLUMN "text" SET DATA TYPE VARCHAR(1500);
