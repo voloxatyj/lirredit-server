@@ -4,7 +4,7 @@ import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { ConfigModule } from '@nestjs/config';
 import { LoggerMiddleware } from './utils/logger.middleware';
 import { join } from 'path';
-import { UsersModule } from './users/users.module';
+import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
@@ -32,7 +32,7 @@ import { PassportModule } from '@nestjs/passport';
         },
       },
     }),
-    UsersModule,
+    UserModule,
     AuthModule,
   ],
   controllers: [],

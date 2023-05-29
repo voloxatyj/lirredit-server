@@ -4,8 +4,8 @@ import { User } from 'src/types/general';
 import { UpdateUserInput } from 'src/types/request';
 
 @Injectable()
-export class UsersService {
-  private logger = new Logger(UsersService.name);
+export class UserService {
+  private logger = new Logger(UserService.name);
 
   constructor(private prisma: PrismaService) {}
   async findById(id: number) {

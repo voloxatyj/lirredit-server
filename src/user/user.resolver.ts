@@ -4,11 +4,11 @@ import { User } from 'src/types/general';
 import { UpdateUserInput } from 'src/types/request';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { UserResponse } from '../types/response';
-import { UsersService } from './users.service';
+import { UserService } from './user.service';
 
 @Resolver(User)
-export class UsersResolver {
-  constructor(private readonly userService: UsersService) {}
+export class UserResolver {
+  constructor(private readonly userService: UserService) {}
 
   @Mutation(() => UserResponse)
   create() {
