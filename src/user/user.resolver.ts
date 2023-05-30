@@ -25,21 +25,25 @@ export class UserResolver {
     return this.userService.findById(req.session.userId);
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => [User], { name: 'user' })
   findAll() {
     return this.userService.findAll();
   }
 
+  @UseGuards(AuthGuard)
   @Query(() => User, { name: 'user' })
   findOne(@Args('email') email: string) {
     return this.userService.findOne(email);
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => User)
   updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => User)
   removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.userService.remove(id);

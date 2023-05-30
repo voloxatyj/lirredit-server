@@ -7,7 +7,6 @@ import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ChangePasswordInput, LoginInput, SignUpInput } from 'src/types/request';
 import { PasswordAuthResponse, UserResponse } from 'src/types/response';
-import { UserService } from 'src/user/user.service';
 import { hashingPassword, verifyingPassword } from 'src/utils/helpers';
 import { sendEmail } from 'src/utils/sendEmai';
 import { validateEmail, validatePassword, validateRegister } from 'src/utils/validation';
@@ -18,7 +17,6 @@ export class AuthService {
 
   constructor(
     private prisma: PrismaService,
-    private readonly userService: UserService,
     private config: ConfigService,
   ) {}
 
@@ -106,12 +104,6 @@ export class AuthService {
     return {
       user,
     };
-  }
-
-  async validateUser({ usernameOrEmail, password }: LoginInput) {
-    const user = await this.userService.findOne(usernameOrEmail);
-    const result = await verifyingPassword(password, user.password);
-    return result;
   }
 
   async forgotPassword(email: string): Promise<PasswordAuthResponse> {

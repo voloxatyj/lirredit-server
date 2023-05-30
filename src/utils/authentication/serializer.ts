@@ -1,11 +1,11 @@
 import { PassportSerializer } from '@nestjs/passport';
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthSerializer extends PassportSerializer {
-  constructor(@Inject(UserService) private userService: UserService) {
+  constructor(@Inject(forwardRef(() => UserService)) private userService: UserService) {
     super();
   }
   serializeUser(user: User, done: (err: Error, user: { id: number; role: string }) => void) {

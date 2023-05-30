@@ -1,15 +1,23 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from 'src/types/general';
-import { UpdateUserInput } from 'src/types/request';
+import { LoginInput, UpdateUserInput } from 'src/types/request';
+import { verifyingPassword } from 'src/utils/helpers';
 
 @Injectable()
 export class UserService {
   private logger = new Logger(UserService.name);
 
   constructor(private prisma: PrismaService) {}
+
   async findById(id: number) {
     return this.prisma.user.findUnique({ where: { id } });
+  }
+
+  async validateUser({ usernameOrEmail, password }: LoginInput) {
+    const user = await this.findOne(usernameOrEmail);
+    const result = await verifyingPassword(password, user.password);
+    return result;
   }
 
   findAll() {

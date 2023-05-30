@@ -16,7 +16,6 @@ export class AuthResolver {
     private readonly configService: ConfigService,
   ) {}
 
-  @UseGuards(AuthGuard)
   @Mutation(() => UserResponse)
   async signUp(
     @Args('credentials') credentials: SignUpInput,
@@ -25,7 +24,6 @@ export class AuthResolver {
     return this.authService.register(credentials, req);
   }
 
-  @UseGuards(AuthGuard)
   @Mutation(() => UserResponse)
   async login(
     @Args('credentials') credentials: LoginInput,
@@ -34,6 +32,7 @@ export class AuthResolver {
     return this.authService.login(credentials, req);
   }
 
+  @UseGuards(AuthGuard)
   @Mutation(() => Boolean)
   async logout(@Context() { req, res }: MyContext) {
     return new Promise(resolve =>
