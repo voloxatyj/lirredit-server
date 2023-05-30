@@ -34,9 +34,36 @@ export class User {
   @Field()
     email!: string;
 
-  @Field(() => String)
+  @Field(() => Date)
     createdAt: Date;
 
-  @Field(() => String)
+  @Field(() => Date)
+    updatedAt: Date;
+}
+
+@ObjectType()
+export class Post {
+  @Field(() => Int)
+    id: number;
+
+  @Field()
+    text!: string;
+
+  @Field()
+    title!: string;
+
+  @Field()
+    points: number;
+
+  @Field()
+    voteStatus: number;
+
+  @Field()
+    userId!: number;
+
+  @Field(() => Date)
+    createdAt: Date;
+
+  @Field(() => Date)
     updatedAt: Date;
 }

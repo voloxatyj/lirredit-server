@@ -7,6 +7,11 @@ input ChangePasswordInput {
   token: String!
 }
 
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
 type FieldError {
   field: String!
   message: String!
@@ -20,6 +25,7 @@ input LoginInput {
 type Mutation {
   changePassword(credentials: ChangePasswordInput!): UserResponse!
   create: UserResponse!
+  createPost(input: PostInput!): PostResponse!
   forgotPassword(email: String!): PasswordAuthResponse!
   login(credentials: LoginInput!): UserResponse!
   logout: Boolean!
@@ -33,8 +39,32 @@ type PasswordAuthResponse {
   success: Boolean!
 }
 
+type Post {
+  createdAt: DateTime!
+  id: Int!
+  points: Float!
+  text: String!
+  title: String!
+  updatedAt: DateTime!
+  userId: Float!
+  voteStatus: Float!
+}
+
+input PostInput {
+  text: String!
+  title: String!
+}
+
+type PostResponse {
+  author: User
+  errors: [FieldError!]
+  post: Post
+  posts: Post
+}
+
 type Query {
   getUser: User
+  posts: PostResponse!
   user(email: String!): User!
 }
 
@@ -52,10 +82,10 @@ input UpdateUserInput {
 }
 
 type User {
-  createdAt: String!
+  createdAt: DateTime!
   email: String!
   id: Int!
-  updatedAt: String!
+  updatedAt: DateTime!
   username: String!
 }
 

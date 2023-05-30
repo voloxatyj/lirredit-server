@@ -51,3 +51,14 @@ export class ChangePasswordInput {
   @Field(() => String)
     token: string;
 }
+
+/* POST INPUT TYPES */
+
+@InputType()
+export class PostInput {
+  @Field(() => String)
+    title: string;
+
+  @Field(() => String)
+    text: string;
+}
