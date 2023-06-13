@@ -1,8 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { MyContext } from 'src/types/general';
-import { PostInput } from 'src/types/request';
-import { PostResponse } from 'src/types/response';
+import { GetPostsInput, PostInput } from 'src/types/request';
+import { PostsResponse, PostResponse } from 'src/types/response';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { PostService } from './post.service';
 
@@ -11,14 +11,14 @@ export class PostResolver {
   constructor(private readonly postService: PostService) {}
 
   @UseGuards(AuthGuard)
-  @Query(() => PostResponse)
-  async posts(): Promise<PostResponse> {
-    return this.postService.findAll();
+  @Query(() => PostsResponse)
+  async posts(@Args('input') input: GetPostsInput): Promise<PostsResponse> {
+    return this.postService.findAll(input);
   }
 
   @UseGuards(AuthGuard)
   @Mutation(() => PostResponse)
-  async createPost(
+  async create(
     @Args('input') input: PostInput,
     @Context() { req }: MyContext,
   ): Promise<PostResponse> {

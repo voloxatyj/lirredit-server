@@ -26,16 +26,19 @@ export class PasswordAuthResponse {
 /* Post RESPONSE TYPES */
 
 @ObjectType()
+export class PostsResponse {
+  @Field(() => String, { nullable: true })
+    error?: string;
+
+  @Field(() => [Post])
+    posts: Post[];
+}
+
+@ObjectType()
 export class PostResponse {
-  @Field(() => [FieldError], { nullable: true })
-    errors?: FieldError[];
+  @Field(() => String, { nullable: true })
+    error?: string;
 
-  @Field(() => Post, { nullable: true })
-    post?: Post;
-
-  @Field(() => Post, { nullable: true })
-    posts?: Post[];
-
-  @Field(() => User, { nullable: true })
-    author?: User;
+  @Field(() => Post)
+    post: Post;
 }

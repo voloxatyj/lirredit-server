@@ -17,6 +17,13 @@ type FieldError {
   message: String!
 }
 
+input GetPostsInput {
+  cursor: Float!
+  limit: Float!
+  text: String
+  title: String
+}
+
 input LoginInput {
   password: String!
   usernameOrEmail: String!
@@ -24,8 +31,7 @@ input LoginInput {
 
 type Mutation {
   changePassword(credentials: ChangePasswordInput!): UserResponse!
-  create: UserResponse!
-  createPost(input: PostInput!): PostResponse!
+  create(input: PostInput!): PostResponse!
   forgotPassword(email: String!): PasswordAuthResponse!
   login(credentials: LoginInput!): UserResponse!
   logout: Boolean!
@@ -42,11 +48,13 @@ type PasswordAuthResponse {
 type Post {
   createdAt: DateTime!
   id: Int!
+  image: String!
   points: Float!
   text: String!
   title: String!
   updatedAt: DateTime!
   userId: Float!
+  users: User!
   voteStatus: Float!
 }
 
@@ -56,15 +64,18 @@ input PostInput {
 }
 
 type PostResponse {
-  author: User
-  errors: [FieldError!]
-  post: Post
-  posts: Post
+  error: String
+  post: Post!
+}
+
+type PostsResponse {
+  error: String
+  posts: [Post!]!
 }
 
 type Query {
   getUser: User
-  posts: PostResponse!
+  posts(input: GetPostsInput!): PostsResponse!
   user(email: String!): User!
 }
 

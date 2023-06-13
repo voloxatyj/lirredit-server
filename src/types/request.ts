@@ -62,3 +62,18 @@ export class PostInput {
   @Field(() => String)
     text: string;
 }
+
+@InputType()
+export class GetPostsInput {
+  @Field(() => Number)
+    limit?: number;
+
+  @Field(() => Number)
+    cursor?: number;
+
+  @Field(() => String, { nullable: true })
+    text?: string | null;
+
+  @Field(() => String, { nullable: true })
+    title?: string | null;
+}

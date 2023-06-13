@@ -53,6 +53,9 @@ export class Post {
     title!: string;
 
   @Field()
+    image: string;
+
+  @Field()
     points: number;
 
   @Field()
@@ -60,6 +63,9 @@ export class Post {
 
   @Field()
     userId!: number;
+
+  @Field()
+    users!: User;
 
   @Field(() => Date)
     createdAt: Date;
