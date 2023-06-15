@@ -17,7 +17,7 @@ export class UserResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => User, { nullable: true })
-  getUser(@Context() { req }: any) {
+  async getUser(@Context() { req }: any) {
     if (!req.session.userId) {
       return null;
     }
@@ -27,25 +27,25 @@ export class UserResolver {
 
   @UseGuards(AuthGuard)
   @Query(() => [User], { name: 'user' })
-  findAll() {
+  async findAll() {
     return this.userService.findAll();
   }
 
   @UseGuards(AuthGuard)
   @Query(() => User, { name: 'user' })
-  findOne(@Args('email') email: string) {
+  async findOne(@Args('email') email: string) {
     return this.userService.findOne(email);
   }
 
   @UseGuards(AuthGuard)
   @Mutation(() => User)
-  updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
+  async updateUser(@Args('updateUserInput') updateUserInput: UpdateUserInput) {
     return this.userService.update(updateUserInput.id, updateUserInput);
   }
 
   @UseGuards(AuthGuard)
   @Mutation(() => User)
-  removeUser(@Args('id', { type: () => Int }) id: number) {
+  async removeUser(@Args('id', { type: () => Int }) id: number) {
     return this.userService.remove(id);
   }
 }

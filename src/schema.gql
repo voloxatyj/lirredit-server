@@ -96,6 +96,7 @@ type User {
   createdAt: DateTime!
   email: String!
   id: Int!
+  image: String
   updatedAt: DateTime!
   username: String!
 }

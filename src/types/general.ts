@@ -34,6 +34,9 @@ export class User {
   @Field()
     email!: string;
 
+  @Field({ nullable: true })
+    image: string;
+
   @Field(() => Date)
     createdAt: Date;
 
