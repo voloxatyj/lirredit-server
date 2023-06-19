@@ -1,6 +1,6 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
-import { User } from 'src/types/general';
+import { MyContext, User } from 'src/types/general';
 import { UpdateUserInput } from 'src/types/request';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { UserResponse } from '../types/response';
@@ -16,8 +16,8 @@ export class UserResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Query(() => User, { nullable: true })
-  async getUser(@Context() { req }: any) {
+  @Query(() => User, { nullable: true, name: 'getUser' })
+  async getUser(@Context() { req }: MyContext) {
     if (!req.session.userId) {
       return null;
     }
@@ -26,13 +26,13 @@ export class UserResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Query(() => [User], { name: 'user' })
-  async findAll() {
-    return this.userService.findAll();
+  @Query(() => [User], { name: 'findUsers' })
+  async findUsers(@Context() { req }: MyContext) {
+    return this.userService.findUsers(req.session.userId);
   }
 
   @UseGuards(AuthGuard)
-  @Query(() => User, { name: 'user' })
+  @Query(() => User, { name: 'findOne' })
   async findOne(@Args('email') email: string) {
     return this.userService.findOne(email);
   }

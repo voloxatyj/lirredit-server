@@ -74,9 +74,10 @@ type PostsResponse {
 }
 
 type Query {
+  findOne(email: String!): User!
+  findUsers: [User!]!
   getUser: User
   posts(input: GetPostsInput!): PostsResponse!
-  user(email: String!): User!
 }
 
 input SignUpInput {

@@ -1,14 +1,16 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { User } from 'src/types/general';
 import { LoginInput, UpdateUserInput } from 'src/types/request';
+import { generateUniqueRandom } from 'src/utils/generateUniqueRandom';
 import { verifyingPassword } from 'src/utils/helpers';
 
 @Injectable()
 export class UserService {
   private logger = new Logger(UserService.name);
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private config: ConfigService) {}
 
   async findById(id: number) {
     return this.prisma.user.findUnique({ where: { id } });
@@ -20,8 +22,17 @@ export class UserService {
     return result;
   }
 
-  findAll() {
-    return `This action returns all user`;
+  async findUsers(id: number): Promise<User[]> {
+    const maxNr = await this.prisma.user.count();
+    const length = +this.config.get('DISPLAY_USERS');
+    const unique = generateUniqueRandom(maxNr, length, id)() as number[];
+    const users = this.prisma.user.findMany({
+      where: {
+        id: { in: unique },
+      },
+    });
+
+    return users;
   }
 
   async findOne(usernameOrEmail: string): Promise<User | any> {
