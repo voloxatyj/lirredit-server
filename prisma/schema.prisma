@@ -19,6 +19,8 @@ model User {
   token     String?  @unique
   posts     Post[]
   updoots   Updoot[]
+  followedBy Follows[] @relation("following")
+  following  Follows[] @relation("follower")
 
   @@map("users")
 }
@@ -38,6 +40,17 @@ model Post {
 
   @@index([createdAt(sort: Desc)])
   @@map("posts")
+}
+
+model Follows {
+  follower    User @relation("follower", fields: [followerId], references: [id])
+  followerId  Int
+  following   User @relation("following", fields: [followingId], references: [id])
+  followingId Int
+  date        DateTime @default(now())
+
+  @@id([followerId, followingId])
+  @@map("follows")
 }
 
 model Updoot {
