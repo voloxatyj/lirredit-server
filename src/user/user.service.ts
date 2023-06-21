@@ -26,10 +26,11 @@ export class UserService {
     const maxNr = await this.prisma.user.count();
     const length = +this.config.get('DISPLAY_USERS');
     const unique = generateUniqueRandom(maxNr, length, id)() as number[];
-    const users = this.prisma.user.findMany({
+    const users = await this.prisma.user.findMany({
       where: {
         id: { in: unique },
       },
+      include: { followedBy: true, following: true },
     });
 
     return users;
@@ -42,7 +43,7 @@ export class UserService {
           ? { email: usernameOrEmail }
           : { username: usernameOrEmail },
       });
-      return user;
+      return { user };
     } catch (error) {
       this.logger.error(`Failed to login`, error.stack);
       throw new InternalServerErrorException();

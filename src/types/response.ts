@@ -1,4 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql';
+import { Follows } from '@prisma/client';
 import { FieldError, Post, User } from './general';
 
 /* USER RESPONSE TYPES */
@@ -10,6 +11,15 @@ export class UserResponse {
 
   @Field(() => User, { nullable: true })
     user?: User;
+}
+
+@ObjectType()
+export class UsersResponse {
+  @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
+
+  @Field(() => [User], { nullable: true })
+    users?: (User & { followedBy: Follows[]; following: Follows[] })[];
 }
 
 /* AUTH RESPONSE TYPES */

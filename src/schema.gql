@@ -50,6 +50,7 @@ type Post {
   id: Int!
   image: String!
   points: Float!
+  short_text: String!
   text: String!
   title: String!
   updatedAt: DateTime!
@@ -74,7 +75,7 @@ type PostsResponse {
 }
 
 type Query {
-  findOne(email: String!): User!
+  findOne(email: String!): UserResponse!
   findUsers: [User!]!
   getUser: User
   posts(input: GetPostsInput!): PostsResponse!
@@ -94,10 +95,12 @@ input UpdateUserInput {
 }
 
 type User {
+  avatarName: String!
   createdAt: DateTime!
   email: String!
   id: Int!
   image: String
+  short_username: String!
   updatedAt: DateTime!
   username: String!
 }
