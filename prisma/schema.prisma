@@ -47,6 +47,7 @@ model Follows {
   followerId  Int
   following   User @relation("following", fields: [followingId], references: [id])
   followingId Int
+  status      Status   @default(WAITING)
   date        DateTime @default(now())
 
   @@id([followerId, followingId])
@@ -68,4 +69,11 @@ enum Role {
   USER
   ADMIN
   MODERATOR
+}
+
+enum Status {
+  PENDING
+  FULFILLED
+  REJECTED
+  WAITING
 }
