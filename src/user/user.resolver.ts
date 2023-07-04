@@ -62,6 +62,6 @@ export class UserResolver {
 
   @ResolveField(() => String)
   short_username(@Parent() user: User) {
-    return user.username.substring(0, 5);
+    return `${user.username.substring(0, 5)}...`;
   }
 }
