@@ -1,5 +1,14 @@
 import { UseGuards } from '@nestjs/common';
-import { Args, Context, Int, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import {
+  Args,
+  Context,
+  Int,
+  Mutation,
+  Parent,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql';
 import { MyContext, User } from 'src/types/general';
 import { UpdateUserInput } from 'src/types/request';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
@@ -53,6 +62,6 @@ export class UserResolver {
 
   @ResolveField(() => String)
   short_username(@Parent() user: User) {
-    return user.username.substring(0, 6);
+    return user.username.substring(0, 5);
   }
 }

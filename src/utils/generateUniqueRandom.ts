@@ -23,4 +23,3 @@ export const generateUniqueRandom = (maxNr: number, length: number, id: number) 
     return Array.from(uniqueNums);
   };
 };
-

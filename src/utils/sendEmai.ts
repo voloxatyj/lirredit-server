@@ -3,7 +3,12 @@ import handlebars from 'handlebars';
 import fs from 'fs';
 import path from 'path';
 
-export const sendEmail = async (email: string, subject: string, payload: object, template: string) => {
+export const sendEmail = async (
+  email: string,
+  subject: string,
+  payload: object,
+  template: string,
+) => {
   const testAccount = await nodemailer.createTestAccount();
 
   const transporter = nodemailer.createTransport({

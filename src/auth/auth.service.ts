@@ -15,10 +15,7 @@ import { validateEmail, validatePassword, validateRegister } from 'src/utils/val
 export class AuthService {
   private logger = new Logger(AuthService.name);
 
-  constructor(
-    private prisma: PrismaService,
-    private config: ConfigService,
-  ) {}
+  constructor(private prisma: PrismaService, private config: ConfigService) {}
 
   async register(credentials: SignUpInput, req: Request): Promise<UserResponse> {
     const errors = validateRegister(credentials);

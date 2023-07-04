@@ -1,49 +1,41 @@
 /* eslint-disable indent */
 import { Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
 
-import connectRedis from 'connect-redis';
 import session from 'express-session';
-import { createClient } from 'redis';
 import passport from 'passport';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import { appConfig } from './config/app.config';
+import { SwaggerModule } from '@nestjs/swagger';
+import { swagger_config } from './config/swagger.config';
+import { RedisStore, redisClient } from './config/redis.config';
 
 async function bootstrap() {
   const logger = new Logger('Server Instance');
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const {
+    client_protocol,
+    client_host,
+    client_port,
+    session_secret,
+    cookie_name,
+    environment,
+    protocol,
+    host,
+    port,
+  } = appConfig();
 
-  app.enableCors({ origin: ['http://localhost:3000'], credentials: true });
+  app.enableCors({
+    origin: [`${client_protocol}://${client_host}:${client_port}`],
+    credentials: true,
+  });
   app.use(cookieParser());
 
-  const configService = app.get(ConfigService);
-  const __prod__ = configService.get('ENVIRONMENT') === 'production';
+  const __prod__ = environment === 'production';
 
-  /*REDIS*/
-  const RedisStore = connectRedis(session);
-  const redisDB: string = configService.get('REDIS_DB');
-  const redisHost: string = configService.get('REDIS_HOST');
-  const redisPort: number = configService.get('REDIS_PORT');
-  const url = `${redisDB}://${redisHost}:${redisPort}`;
-  const redisClient = createClient({ url, legacyMode: true });
-  await redisClient
-    .connect()
-    .then(() =>
-      logger.log(`
-                    ##################################################
-                        🚀[REDIS]: Connected to Redis successfully
-                    ##################################################
-    `),
-    )
-    .catch(err => logger.error(`Could not establish a connection with redis. ${err}`));
-
-  /*SESSIONS*/
-  const session_secret: string = configService.get('SESSION_SECRET');
-  const cookie_name: string = configService.get('COOKIE_NAME');
-
+  /* SESSIONS */
   app.use(
     session({
       name: cookie_name,
@@ -60,31 +52,23 @@ async function bootstrap() {
   );
   app.use(passport.initialize());
   app.use(passport.session());
-  /*SWAGGER*/
-  const config = new DocumentBuilder()
-    .addCookieAuth()
-    .setTitle('LirRedit')
-    .setDescription('The LirRedit API Documentation')
-    .setVersion('0.0.1')
-    .build();
 
-  const document = SwaggerModule.createDocument(app, config);
+  /* SWAGGER */
+  const document = SwaggerModule.createDocument(app, swagger_config);
   SwaggerModule.setup('api', app, document);
 
-  // Log Env
+  /* LOG MODE */
   logger.log(`
                         #######################################
-                           🚀[Environment Mode]: ${configService.get('ENVIRONMENT')}
+                           🚀[Environment Mode]: ${environment}
                         #######################################
     `);
 
-  // start server
-  await app.listen(configService.get('PORT'), () => {
+  /* START SERVER */
+  await app.listen(port, () => {
     logger.log(`
           ############################################################################
-                  🚀[server]: Server is up and running @ ${configService.get(
-                    'PROTOCOL',
-                  )}://${configService.get('HOST')}:${configService.get('PORT')}
+                  🚀[server]: Server is up and running @ ${protocol}://${host}:${port}
           ############################################################################
     `);
   });

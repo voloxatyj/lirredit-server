@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
 import { PostModule } from './post/post.module';
+import { appConfig } from './config/app.config';
 
 @Module({
   imports: [
@@ -16,13 +17,13 @@ import { PostModule } from './post/post.module';
     PassportModule.register({ session: true }),
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env',
+      load: [appConfig],
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       sortSchema: true,
-      context: ({ req, res }: { req: Request, res: Response }) => ({
+      context: ({ req, res }: { req: Request; res: Response }) => ({
         req,
         res,
       }),

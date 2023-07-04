@@ -52,9 +52,9 @@ export class PrismaService
 
       await this.$connect();
       this.logger.log(`
-               ################################################################
-                  🚀[database]: Create connection to lireddit DB successfully
-               ################################################################`);
+               ##########################################################
+                  🚀[database]: Create connection to  DB successfully
+               ##########################################################`);
     } catch (error) {
       this.logger.log(error);
     }
