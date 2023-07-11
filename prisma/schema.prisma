@@ -37,6 +37,7 @@ model Post {
   createdAt  DateTime @default(now()) @map("created_at")
   updatedAt  DateTime @default(now()) @map("updated_at")
   updoots    Updoot[]
+  images     Image[]
 
   @@index([createdAt(sort: Desc)])
   @@map("posts")
@@ -63,6 +64,16 @@ model Updoot {
   postId Int  @map("post_id")
 
   @@map("updoots")
+}
+
+model Image {
+  id     Int  @id @unique @default(autoincrement())
+  posts  Post @relation(fields: [postId], references: [id])
+  url    String   @db.VarChar()
+  public_id  String   @db.VarChar()
+  postId Int  @map("post_id")
+
+  @@map("images")
 }
 
 enum Role {
