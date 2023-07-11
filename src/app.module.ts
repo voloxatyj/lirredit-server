@@ -10,6 +10,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { PassportModule } from '@nestjs/passport';
 import { PostModule } from './post/post.module';
 import { appConfig } from './config/app.config';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { appConfig } from './config/app.config';
     UserModule,
     AuthModule,
     PostModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],
