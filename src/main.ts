@@ -1,16 +1,17 @@
 /* eslint-disable indent */
 import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
+import { AppModule } from './app.module';
 
-import session from 'express-session';
-import passport from 'passport';
 import { NestExpressApplication } from '@nestjs/platform-express';
-import { appConfig } from './config/app.config';
 import { SwaggerModule } from '@nestjs/swagger';
-import { swagger_config } from './config/swagger.config';
+import session from 'express-session';
+import helmet from 'helmet';
+import passport from 'passport';
+import { appConfig } from './config/app.config';
 import { RedisStore, redisClient } from './config/redis.config';
+import { swagger_config } from './config/swagger.config';
 
 async function bootstrap() {
   const logger = new Logger('Server Instance');
@@ -27,11 +28,27 @@ async function bootstrap() {
     port,
   } = appConfig();
 
+  app.useBodyParser('json', { limit: '10mb' });
+
   app.enableCors({
     origin: [`${client_protocol}://${client_host}:${client_port}`],
     credentials: true,
   });
   app.use(cookieParser());
+  app.setGlobalPrefix('v1');
+  app.use(
+    helmet({
+      crossOriginEmbedderPolicy: false,
+      contentSecurityPolicy: {
+        directives: {
+          imgSrc: [`'self'`, 'data:', 'apollo-server-landing-page.cdn.apollographql.com'],
+          scriptSrc: [`'self'`, `https: 'unsafe-inline'`],
+          manifestSrc: [`'self'`, 'apollo-server-landing-page.cdn.apollographql.com'],
+          frameSrc: [`'self'`, 'sandbox.embed.apollographql.com'],
+        },
+      },
+    }),
+  );
 
   const __prod__ = environment === 'production';
 
