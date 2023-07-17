@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Follows } from '@prisma/client';
-import { FieldError, Post, User } from './general';
+import { FieldError, Post, User, Image } from './general';
 
 /* USER RESPONSE TYPES */
 
@@ -37,18 +37,18 @@ export class PasswordAuthResponse {
 
 @ObjectType()
 export class PostsResponse {
-  @Field(() => String, { nullable: true })
-    error?: string;
+  @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
 
-  @Field(() => [Post])
-    posts: Post[];
+  @Field(() => [Post], { nullable: true })
+    posts?: (Post & { users: User; images: Image[] })[];
 }
 
 @ObjectType()
 export class PostResponse {
-  @Field(() => String, { nullable: true })
-    error?: string;
+  @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
 
-  @Field(() => Post)
-    post: Post;
+  @Field(() => Post, { nullable: true })
+    post?: (Post & { users: User; images: Image[] });
 }

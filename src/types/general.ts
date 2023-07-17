@@ -8,6 +8,8 @@ declare module 'express-session' {
   }
 }
 
+export const CLOUDINARY = 'Cloudinary';
+
 export type MyContext = {
   req: Request & {
     session: Session & Partial<SessionData>;
@@ -45,6 +47,24 @@ export class User {
 }
 
 @ObjectType()
+export class Image {
+  @Field(() => Int)
+    id: number;
+
+  @Field(() => String)
+    secure_url!: string;
+
+  @Field(() => String)
+    public_id: string;
+
+  @Field(() => Int)
+    postId: number;
+
+  @Field(() => Date)
+    createdAt: Date;
+}
+
+@ObjectType()
 export class Post {
   @Field(() => Int)
     id: number;
@@ -54,9 +74,6 @@ export class Post {
 
   @Field()
     title!: string;
-
-  @Field()
-    image: string;
 
   @Field()
     points: number;
@@ -69,6 +86,9 @@ export class Post {
 
   @Field()
     users!: User;
+
+  @Field(() => [Image])
+    images!: Image[] | [];
 
   @Field(() => Date)
     createdAt: Date;

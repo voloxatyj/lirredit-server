@@ -1,4 +1,4 @@
-import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
+import { Field, InputType, Int, PartialType } from '@nestjs/graphql';
 
 /* USER INPUT TYPES */
 
@@ -55,12 +55,24 @@ export class ChangePasswordInput {
 /* POST INPUT TYPES */
 
 @InputType()
+export class ImageInput {
+  @Field(() => String)
+    secure_url: string;
+
+  @Field(() => String)
+    public_id: string;
+}
+
+@InputType()
 export class PostInput {
   @Field(() => String)
     title: string;
 
   @Field(() => String)
     text: string;
+
+  @Field(() => [ImageInput])
+    images: ImageInput[];
 }
 
 @InputType()
