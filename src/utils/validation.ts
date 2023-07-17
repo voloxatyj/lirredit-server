@@ -1,4 +1,4 @@
-import { CreateUserInput } from 'src/types/request';
+import { CreateUserInput, PostInput } from 'src/types/request';
 import { FieldError } from 'src/types/general';
 
 export const validateRegister = ({ email, password, username }: CreateUserInput) => {
@@ -78,6 +78,31 @@ export const validateEmail = ({ email }: Partial<CreateUserInput>): FieldError[]
       {
         field: 'email',
         message: 'invalid email',
+      },
+    ];
+  }
+
+  return null;
+};
+
+export const validateCreatePost = ({
+  title,
+  text,
+}: Partial<PostInput>): FieldError[] => {
+  if (title.length < 5) {
+    return [
+      {
+        field: 'title',
+        message: `Title field still need ${5 - title.length} more characters`,
+      },
+    ];
+  }
+
+  if (text.length < 5) {
+    return [
+      {
+        field: 'text',
+        message: `Text field still need ${5 - text.length} more characters`,
       },
     ];
   }
