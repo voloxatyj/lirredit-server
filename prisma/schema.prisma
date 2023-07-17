@@ -8,17 +8,17 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @unique @default(autoincrement())
-  username  String   @unique
-  email     String   @unique
-  password  String   @db.VarChar(255)
-  image     String?  @db.VarChar(255)
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
-  role      Role     @default(USER)
-  token     String?  @unique
-  posts     Post[]
-  updoots   Updoot[]
+  id         Int       @id @unique @default(autoincrement())
+  username   String    @unique
+  email      String    @unique
+  password   String    @db.VarChar(255)
+  image      String?   @db.VarChar(255)
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @default(now()) @map("updated_at")
+  role       Role      @default(USER)
+  token      String?   @unique
+  posts      Post[]
+  updoots    Updoot[]
   followedBy Follows[] @relation("following")
   following  Follows[] @relation("follower")
 
@@ -30,7 +30,6 @@ model Post {
   users      User     @relation(fields: [userId], references: [id])
   title      String   @db.VarChar(255)
   text       String   @db.VarChar(1500)
-  image      String?  @db.VarChar(255)
   points     Int      @default(0)
   voteStatus Int?
   userId     Int      @map("user_id")
@@ -44,9 +43,9 @@ model Post {
 }
 
 model Follows {
-  follower    User @relation("follower", fields: [followerId], references: [id])
+  follower    User     @relation("follower", fields: [followerId], references: [id])
   followerId  Int
-  following   User @relation("following", fields: [followingId], references: [id])
+  following   User     @relation("following", fields: [followingId], references: [id])
   followingId Int
   status      Status   @default(WAITING)
   date        DateTime @default(now())
@@ -67,13 +66,14 @@ model Updoot {
 }
 
 model Image {
-  id     Int  @id @unique @default(autoincrement())
-  posts  Post @relation(fields: [postId], references: [id])
-  url    String   @db.VarChar()
+  id         Int      @id @unique @default(autoincrement())
+  posts      Post     @relation(fields: [postId], references: [id])
+  secure_url String   @db.VarChar()
   public_id  String   @db.VarChar()
-  postId Int  @map("post_id")
+  postId     Int      @map("post_id")
+  createdAt  DateTime @default(now()) @map("created_at")
 
-  @@map("images")
+  @@map("pictures")
 }
 
 enum Role {

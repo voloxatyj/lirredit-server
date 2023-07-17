@@ -24,6 +24,19 @@ input GetPostsInput {
   title: String
 }
 
+type Image {
+  createdAt: DateTime!
+  id: Int!
+  postId: Int!
+  public_id: String!
+  secure_url: String!
+}
+
+input ImageInput {
+  public_id: String!
+  secure_url: String!
+}
+
 input LoginInput {
   password: String!
   usernameOrEmail: String!
@@ -48,7 +61,7 @@ type PasswordAuthResponse {
 type Post {
   createdAt: DateTime!
   id: Int!
-  image: String!
+  images: [Image!]!
   points: Float!
   short_text: String!
   text: String!
@@ -60,18 +73,19 @@ type Post {
 }
 
 input PostInput {
+  images: [ImageInput!]!
   text: String!
   title: String!
 }
 
 type PostResponse {
-  error: String
-  post: Post!
+  errors: [FieldError!]
+  post: Post
 }
 
 type PostsResponse {
-  error: String
-  posts: [Post!]!
+  errors: [FieldError!]
+  posts: [Post!]
 }
 
 type Query {
