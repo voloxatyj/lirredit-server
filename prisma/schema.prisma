@@ -21,22 +21,25 @@ model User {
   updoots    Updoot[]
   followedBy Follows[] @relation("following")
   following  Follows[] @relation("follower")
+  comments   Comments[]
 
   @@map("users")
 }
 
 model Post {
-  id         Int      @id @unique @default(autoincrement())
-  users      User     @relation(fields: [userId], references: [id])
-  title      String   @db.VarChar(255)
-  text       String   @db.VarChar(1500)
-  points     Int      @default(0)
+  id         Int        @id @unique @default(autoincrement())
+  users      User       @relation(fields: [userId], references: [id])
+  title      String     @db.VarChar(255)
+  text       String     @db.VarChar(1500)
+  points     Int        @default(0)
   voteStatus Int?
-  userId     Int      @map("user_id")
-  createdAt  DateTime @default(now()) @map("created_at")
-  updatedAt  DateTime @default(now()) @map("updated_at")
+  userId     Int        @map("user_id")
+  createdAt  DateTime   @default(now()) @map("created_at")
+  updatedAt  DateTime   @default(now()) @map("updated_at")
   updoots    Updoot[]
   images     Image[]
+  comments   Comments[]
+  likes      Likes[]
 
   @@index([createdAt(sort: Desc)])
   @@map("posts")
@@ -74,6 +77,34 @@ model Image {
   createdAt  DateTime @default(now()) @map("created_at")
 
   @@map("pictures")
+}
+
+model Comments {
+  id        Int        @id @unique @default(autoincrement())
+  postId    Int        @map("post_id")
+  posts     Post       @relation(fields: [postId], references: [id])
+  userId    Int        @map("user_id")
+  users     User       @relation(fields: [userId], references: [id])
+  treads    Comments[] @relation("treads")
+  comments  Comments?  @relation("treads", fields: [commentId], references: [id])
+  commentId Int?       @map("comment_id")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @default(now()) @map("updated_at")
+  Likes     Likes[]
+
+  @@map("comments")
+}
+
+model Likes {
+  id        Int      @id @unique @default(autoincrement())
+  postId    Int      @map("post_id")
+  posts     Post     @relation(fields: [postId], references: [id])
+  commentId Int      @map("comment_id")
+  comments  Comments @relation(fields: [commentId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("likes")
 }
 
 enum Role {
