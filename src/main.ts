@@ -56,7 +56,11 @@ async function bootstrap() {
   app.use(
     session({
       name: cookie_name,
-      store: new RedisStore({ client: redisClient as any, disableTouch: true, disableTTL: true }),
+      store: new RedisStore({
+        client: redisClient as any,
+        disableTouch: true,
+        disableTTL: true,
+      }),
       secret: session_secret,
       resave: false,
       saveUninitialized: false,

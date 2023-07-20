@@ -85,10 +85,7 @@ export const validateEmail = ({ email }: Partial<CreateUserInput>): FieldError[]
   return null;
 };
 
-export const validateCreatePost = ({
-  title,
-  text,
-}: Partial<PostInput>): FieldError[] => {
+export const validateCreatePost = ({ title, text }: Partial<PostInput>): FieldError[] => {
   if (title.length < 5) {
     return [
       {
