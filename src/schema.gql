@@ -7,6 +7,14 @@ input ChangePasswordInput {
   token: String!
 }
 
+type Comments {
+  createdAt: DateTime!
+  id: Int!
+  postId: Int!
+  updatedAt: DateTime!
+  userId: Int!
+}
+
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
 """
@@ -37,6 +45,10 @@ input ImageInput {
   secure_url: String!
 }
 
+input LikePostInput {
+  post_id: Float!
+}
+
 input LoginInput {
   password: String!
   usernameOrEmail: String!
@@ -46,6 +58,7 @@ type Mutation {
   changePassword(credentials: ChangePasswordInput!): UserResponse!
   create(input: PostInput!): PostResponse!
   forgotPassword(email: String!): PasswordAuthResponse!
+  like(post_id: LikePostInput!): PostResponse!
   login(credentials: LoginInput!): UserResponse!
   logout: Boolean!
   removeUser(id: Int!): User!
@@ -59,23 +72,31 @@ type PasswordAuthResponse {
 }
 
 type Post {
+  comments: [Comments!]!
+  comments_count: String!
   createdAt: DateTime!
   id: Int!
   images: [Image!]!
-  points: Float!
+  likes_count: String!
+  post_likes: [PostLikes!]!
   short_text: String!
   text: String!
   title: String!
   updatedAt: DateTime!
   userId: Float!
   users: User!
-  voteStatus: Float!
 }
 
 input PostInput {
   images: [ImageInput!]!
   text: String!
   title: String!
+}
+
+type PostLikes {
+  createdAt: DateTime!
+  postId: Int!
+  userId: Int!
 }
 
 type PostResponse {
@@ -91,8 +112,8 @@ type PostsResponse {
 type Query {
   findOne(email: String!): UserResponse!
   findUsers: [User!]!
+  getPosts(input: GetPostsInput!): PostsResponse!
   getUser: User
-  posts(input: GetPostsInput!): PostsResponse!
 }
 
 input SignUpInput {

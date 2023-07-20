@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 import { Follows } from '@prisma/client';
-import { FieldError, Post, User, Image } from './general';
+import { FieldError, Post, User, Image, PostLikes, Comments } from './general';
 
 /* USER RESPONSE TYPES */
 
@@ -41,7 +41,12 @@ export class PostsResponse {
     errors?: FieldError[];
 
   @Field(() => [Post], { nullable: true })
-    posts?: (Post & { users: User; images: Image[] })[];
+    posts?: (Post & {
+    users: User;
+    images: Image[];
+    post_likes: PostLikes[];
+    comments: Comments[];
+  })[];
 }
 
 @ObjectType()
@@ -50,5 +55,5 @@ export class PostResponse {
     errors?: FieldError[];
 
   @Field(() => Post, { nullable: true })
-    post?: (Post & { users: User; images: Image[] });
+    post?: Post & { users: User; images: Image[]; post_likes: PostLikes[]; comments: Comments[] };
 }

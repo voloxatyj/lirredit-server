@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GetPostsInput, PostInput } from 'src/types/request';
+import { GetPostsInput, LikePostInput, PostInput } from 'src/types/request';
 import { PostResponse, PostsResponse } from 'src/types/response';
 import { validateCreatePost } from 'src/utils/validation';
 import Filter from 'bad-words';
@@ -12,8 +12,9 @@ export class PostService {
 
   constructor(private prisma: PrismaService) {}
 
-  async findAll({ limit, cursor, title, text }: GetPostsInput): Promise<PostsResponse> {
+  async findAll({ limit, cursor, title, text }: GetPostsInput, id: number): Promise<PostsResponse> {
     try {
+      console.log(id);
       const skip = cursor * limit;
       const posts = await this.prisma.post.findMany({
         take: limit || 20,
@@ -29,7 +30,7 @@ export class PostService {
             contains: title ? title : undefined,
           },
         },
-        include: { users: true, images: true },
+        include: { users: true, images: true, post_likes: true, comments: true },
       });
 
       return { posts };
@@ -58,7 +59,7 @@ export class PostService {
     } = req;
     const response: PostResponse = {
       post: null,
-      errors: null
+      errors: null,
     };
 
     try {
@@ -69,8 +70,9 @@ export class PostService {
             text: edit_text,
             userId,
           },
-          include: { users: true, images: true },
+          include: { users: true, images: true, comments: true, post_likes: true },
         });
+
         return { post: response.post };
       }
 
@@ -81,7 +83,7 @@ export class PostService {
             text: edit_text,
             userId,
           },
-          include: { users: true, images: true },
+          include: { users: true, images: true, comments: true, post_likes: true },
         });
 
         const images_promises = images.map(({ secure_url, public_id }) =>

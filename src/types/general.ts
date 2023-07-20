@@ -76,12 +76,6 @@ export class Post {
     title!: string;
 
   @Field()
-    points: number;
-
-  @Field()
-    voteStatus: number;
-
-  @Field()
     userId!: number;
 
   @Field()
@@ -89,6 +83,42 @@ export class Post {
 
   @Field(() => [Image])
     images!: Image[] | [];
+
+  @Field(() => [Comments])
+    comments: Comments[];
+
+  @Field(() => [PostLikes])
+    post_likes: PostLikes[];
+
+  @Field(() => Date)
+    createdAt: Date;
+
+  @Field(() => Date)
+    updatedAt: Date;
+}
+
+@ObjectType()
+export class PostLikes {
+  @Field(() => Int)
+    postId: number;
+
+  @Field(() => Int)
+    userId: number;
+
+  @Field(() => Date)
+    createdAt: Date;
+}
+
+@ObjectType()
+export class Comments {
+  @Field(() => Int)
+    id: number;
+
+  @Field(() => Int)
+    postId: number;
+
+  @Field(() => Int)
+    userId: number;
 
   @Field(() => Date)
     createdAt: Date;
