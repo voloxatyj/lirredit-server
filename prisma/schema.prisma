@@ -8,38 +8,36 @@ datasource db {
 }
 
 model User {
-  id         Int       @id @unique @default(autoincrement())
-  username   String    @unique
-  email      String    @unique
-  password   String    @db.VarChar(255)
-  image      String?   @db.VarChar(255)
-  createdAt  DateTime  @default(now()) @map("created_at")
-  updatedAt  DateTime  @default(now()) @map("updated_at")
-  role       Role      @default(USER)
-  token      String?   @unique
-  posts      Post[]
-  updoots    Updoot[]
-  followedBy Follows[] @relation("following")
-  following  Follows[] @relation("follower")
-  comments   Comments[]
+  id            Int            @id @unique @default(autoincrement())
+  username      String         @unique
+  email         String         @unique
+  password      String         @db.VarChar(255)
+  image         String?        @db.VarChar(255)
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @map("updated_at")
+  role          Role           @default(USER)
+  token         String?        @unique
+  posts         Post[]
+  followedBy    Follows[]      @relation("following")
+  following     Follows[]      @relation("follower")
+  comments      Comments[]
+  post_likes    PostLikes[]
+  comment_likes CommentLikes[]
 
   @@map("users")
 }
 
 model Post {
-  id         Int        @id @unique @default(autoincrement())
-  users      User       @relation(fields: [userId], references: [id])
-  title      String     @db.VarChar(255)
-  text       String     @db.VarChar(1500)
-  points     Int        @default(0)
-  voteStatus Int?
-  userId     Int        @map("user_id")
-  createdAt  DateTime   @default(now()) @map("created_at")
-  updatedAt  DateTime   @default(now()) @map("updated_at")
-  updoots    Updoot[]
+  id         Int         @id @unique @default(autoincrement())
+  users      User        @relation(fields: [userId], references: [id])
+  title      String      @db.VarChar(255)
+  text       String      @db.VarChar(1500)
+  userId     Int         @map("user_id")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @default(now()) @map("updated_at")
   images     Image[]
   comments   Comments[]
-  likes      Likes[]
+  post_likes PostLikes[]
 
   @@index([createdAt(sort: Desc)])
   @@map("posts")
@@ -57,17 +55,6 @@ model Follows {
   @@map("follows")
 }
 
-model Updoot {
-  id     Int  @id @unique @default(autoincrement())
-  posts  Post @relation(fields: [postId], references: [id])
-  users  User @relation(fields: [userId], references: [id])
-  value  Int
-  userId Int  @map("user_id")
-  postId Int  @map("post_id")
-
-  @@map("updoots")
-}
-
 model Image {
   id         Int      @id @unique @default(autoincrement())
   posts      Post     @relation(fields: [postId], references: [id])
@@ -80,31 +67,41 @@ model Image {
 }
 
 model Comments {
-  id        Int        @id @unique @default(autoincrement())
-  postId    Int        @map("post_id")
-  posts     Post       @relation(fields: [postId], references: [id])
-  userId    Int        @map("user_id")
-  users     User       @relation(fields: [userId], references: [id])
-  treads    Comments[] @relation("treads")
-  comments  Comments?  @relation("treads", fields: [commentId], references: [id])
-  commentId Int?       @map("comment_id")
-  createdAt DateTime   @default(now()) @map("created_at")
-  updatedAt DateTime   @default(now()) @map("updated_at")
-  Likes     Likes[]
+  id            Int            @id @unique @default(autoincrement())
+  postId        Int            @map("post_id")
+  posts         Post           @relation(fields: [postId], references: [id])
+  userId        Int            @map("user_id")
+  users         User           @relation(fields: [userId], references: [id])
+  treads        Comments[]     @relation("treads")
+  comments      Comments?      @relation("treads", fields: [commentId], references: [id])
+  commentId     Int?           @map("comment_id")
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @default(now()) @map("updated_at")
+  comment_likes CommentLikes[]
 
   @@map("comments")
 }
 
-model Likes {
-  id        Int      @id @unique @default(autoincrement())
-  postId    Int      @map("post_id")
+model PostLikes {
+  postId    Int      @unique @map("post_id")
   posts     Post     @relation(fields: [postId], references: [id])
-  commentId Int      @map("comment_id")
+  userId    Int      @unique @map("user_id")
+  users     User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@id([postId, userId])
+  @@map("post_likes")
+}
+
+model CommentLikes {
+  userId    Int      @unique @map("user_id")
+  users     User     @relation(fields: [userId], references: [id])
+  commentId Int      @unique @map("comment_id")
   comments  Comments @relation(fields: [commentId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @default(now()) @map("updated_at")
 
-  @@map("likes")
+  @@id([commentId, userId])
+  @@map("comment_likes")
 }
 
 enum Role {
