@@ -14,7 +14,6 @@ export class PostService {
 
   async findAll({ limit, cursor, title, text }: GetPostsInput, id: number): Promise<PostsResponse> {
     try {
-      console.log(id);
       const skip = cursor * limit;
       const posts = await this.prisma.post.findMany({
         take: limit || 20,
@@ -33,7 +32,11 @@ export class PostService {
         include: { users: true, images: true, post_likes: true, comments: true },
       });
 
-      return { posts };
+      const isLikes = posts.map(({ post_likes }) => {
+        return post_likes.some(({ userId }) => userId === id);
+      });
+
+      return { posts, isLikes };
     } catch (error) {
       this.logger.error(`Can/'t get posts`, error.stack);
       throw new InternalServerErrorException();
@@ -100,6 +103,20 @@ export class PostService {
       });
 
       return { post: response.post };
+    } catch (error) {
+      this.logger.error(`Can/'t get posts`, error.stack);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async likePost({ post_id }: LikePostInput, user_id: number) {
+    try {
+      await this.prisma.postLikes.create({
+        data: {
+          postId: post_id,
+          userId: user_id,
+        },
+      });
     } catch (error) {
       this.logger.error(`Can/'t get posts`, error.stack);
       throw new InternalServerErrorException();

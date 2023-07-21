@@ -89,3 +89,9 @@ export class GetPostsInput {
   @Field(() => String, { nullable: true })
     title?: string | null;
 }
+
+@InputType()
+export class LikePostInput {
+  @Field(() => Number)
+    post_id: number;
+}
