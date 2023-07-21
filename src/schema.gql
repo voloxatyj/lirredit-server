@@ -106,6 +106,7 @@ type PostResponse {
 
 type PostsResponse {
   errors: [FieldError!]
+  isLikes: [Boolean!]!
   posts: [Post!]
 }
 

@@ -47,6 +47,9 @@ export class PostsResponse {
     post_likes: PostLikes[];
     comments: Comments[];
   })[];
+
+  @Field(() => [Boolean])
+    isLikes?: boolean[];
 }
 
 @ObjectType()
