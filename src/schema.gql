@@ -46,7 +46,14 @@ input ImageInput {
 }
 
 input LikePostInput {
-  post_id: Float!
+  isLike: Boolean!
+  postId: Float!
+}
+
+type LikeResponse {
+  errors: [FieldError!]
+  message: String!
+  success: Boolean!
 }
 
 input LoginInput {
@@ -58,7 +65,7 @@ type Mutation {
   changePassword(credentials: ChangePasswordInput!): UserResponse!
   create(input: PostInput!): PostResponse!
   forgotPassword(email: String!): PasswordAuthResponse!
-  like(post_id: LikePostInput!): PostResponse!
+  like(input: LikePostInput!): LikeResponse!
   login(credentials: LoginInput!): UserResponse!
   logout: Boolean!
   removeUser(id: Int!): User!

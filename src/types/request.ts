@@ -93,5 +93,8 @@ export class GetPostsInput {
 @InputType()
 export class LikePostInput {
   @Field(() => Number)
-    post_id: number;
+    postId: number;
+
+  @Field(() => Boolean)
+    isLike: boolean;
 }

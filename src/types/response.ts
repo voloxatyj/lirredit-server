@@ -60,3 +60,15 @@ export class PostResponse {
   @Field(() => Post, { nullable: true })
     post?: Post & { users: User; images: Image[]; post_likes: PostLikes[]; comments: Comments[] };
 }
+
+@ObjectType()
+export class LikeResponse {
+  @Field(() => [FieldError], { nullable: true })
+    errors?: FieldError[];
+
+  @Field(() => Boolean)
+    success: boolean;
+
+  @Field(() => String)
+    message: string;
+}

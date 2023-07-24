@@ -2,7 +2,7 @@ import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { MyContext, Post } from 'src/types/general';
 import { GetPostsInput, LikePostInput, PostInput } from 'src/types/request';
-import { PostResponse, PostsResponse } from 'src/types/response';
+import { LikeResponse, PostResponse, PostsResponse } from 'src/types/response';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { PostService } from './post.service';
 
@@ -29,9 +29,15 @@ export class PostResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(() => PostResponse)
-  async like(@Args('post_id') post_id: LikePostInput, @Context() { req }: MyContext) {
-    return this.postService.likePost(post_id, req.session.userId);
+  @Mutation(() => LikeResponse)
+  async like(@Args('input') input: LikePostInput, @Context() { req }: MyContext) {
+    const { postId, isLike } = input;
+
+    if (isLike) {
+      return this.postService.notLikePost(postId, req.session.userId);
+    }
+
+    return this.postService.likePost(postId, req.session.userId);
   }
 
   @ResolveField(() => String)

@@ -83,9 +83,9 @@ model Comments {
 }
 
 model PostLikes {
-  postId    Int      @unique @map("post_id")
+  postId    Int      @map("post_id")
   posts     Post     @relation(fields: [postId], references: [id])
-  userId    Int      @unique @map("user_id")
+  userId    Int      @map("user_id")
   users     User     @relation(fields: [userId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
 
@@ -94,9 +94,9 @@ model PostLikes {
 }
 
 model CommentLikes {
-  userId    Int      @unique @map("user_id")
+  userId    Int      @map("user_id")
   users     User     @relation(fields: [userId], references: [id])
-  commentId Int      @unique @map("comment_id")
+  commentId Int      @map("comment_id")
   comments  Comments @relation(fields: [commentId], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
 

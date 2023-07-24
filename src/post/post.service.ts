@@ -1,10 +1,10 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import Filter from 'bad-words';
 import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GetPostsInput, LikePostInput, PostInput } from 'src/types/request';
-import { PostResponse, PostsResponse } from 'src/types/response';
+import { GetPostsInput, PostInput } from 'src/types/request';
+import { LikeResponse, PostResponse, PostsResponse } from 'src/types/response';
 import { validateCreatePost } from 'src/utils/validation';
-import Filter from 'bad-words';
 
 @Injectable()
 export class PostService {
@@ -109,16 +109,37 @@ export class PostService {
     }
   }
 
-  async likePost({ post_id }: LikePostInput, user_id: number) {
+  async likePost(postId: number, userId: number): Promise<LikeResponse> {
     try {
       await this.prisma.postLikes.create({
         data: {
-          postId: post_id,
-          userId: user_id,
+          postId,
+          userId,
         },
       });
+
+      return {
+        success: true,
+        message: 'Liked post successfully',
+      };
     } catch (error) {
-      this.logger.error(`Can/'t get posts`, error.stack);
+      this.logger.error(`Can/'t like smth`, error.stack);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async notLikePost(postId: number, userId: number): Promise<LikeResponse> {
+    try {
+      await this.prisma.postLikes.deleteMany({
+        where: { postId, userId },
+      });
+
+      return {
+        success: true,
+        message: 'Not liked post successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Can/'t not like smth`, error.stack);
       throw new InternalServerErrorException();
     }
   }
