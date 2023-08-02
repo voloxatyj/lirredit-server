@@ -2,8 +2,8 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import Filter from 'bad-words';
 import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GetPostsInput, PostInput } from 'src/types/request';
-import { LikeResponse, PostResponse, PostsResponse } from 'src/types/response';
+import { GetPostsInput, PostInput, ViewPostInput } from 'src/models/request.model';
+import { LikeResponse, PostResponse, PostsResponse, ViewResponse } from 'src/models/response.model';
 import { validateCreatePost } from 'src/utils/validation';
 
 @Injectable()
@@ -63,6 +63,7 @@ export class PostService {
     const response: PostResponse = {
       post: null,
       errors: null,
+      isLike: false,
     };
 
     try {
@@ -102,9 +103,9 @@ export class PostService {
         response.post.images = [...saved_images];
       });
 
-      return { post: response.post };
+      return { post: response.post, isLike: response.isLike };
     } catch (error) {
-      this.logger.error(`Can/'t get posts`, error.stack);
+      this.logger.error(`Can/'t get post`, error.stack);
       throw new InternalServerErrorException();
     }
   }
@@ -140,6 +141,39 @@ export class PostService {
       };
     } catch (error) {
       this.logger.error(`Can/'t not like smth`, error.stack);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async viewPost({ postId, views }: ViewPostInput): Promise<ViewResponse> {
+    try {
+      await this.prisma.post.update({
+        where: { id: postId },
+        data: { views }
+      });
+
+      return {
+        success: true,
+        message: 'View post successfully',
+      };
+    } catch (error) {
+      this.logger.error(`Can/'t view post`, error.stack);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  async findOne(id: number): Promise<PostResponse> {
+    try {
+      const post = await this.prisma.post.findUnique({
+        where: { id },
+        include: { users: true, images: true, comments: true, post_likes: true },
+      });
+
+      const isLike = post.post_likes.some(({ userId }) => userId === id);
+
+      return { post, isLike };
+    } catch (error) {
+      this.logger.error(`Can/'t get post`, error.stack);
       throw new InternalServerErrorException();
     }
   }

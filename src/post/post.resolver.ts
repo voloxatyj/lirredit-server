@@ -1,8 +1,8 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { MyContext, Post } from 'src/types/general';
-import { GetPostsInput, LikePostInput, PostInput } from 'src/types/request';
-import { LikeResponse, PostResponse, PostsResponse } from 'src/types/response';
+import { MyContext, Post } from 'src/models/general.model';
+import { GetPostsInput, LikePostInput, PostInput, ViewPostInput } from 'src/models/request.model';
+import { LikeResponse, PostResponse, PostsResponse, ViewResponse } from 'src/models/response.model';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { PostService } from './post.service';
 
@@ -30,7 +30,10 @@ export class PostResolver {
 
   @UseGuards(AuthGuard)
   @Mutation(() => LikeResponse)
-  async like(@Args('input') input: LikePostInput, @Context() { req }: MyContext) {
+  async like(
+    @Args('input') input: LikePostInput,
+    @Context() { req }: MyContext,
+  ): Promise<LikeResponse> {
     const { postId, isLike } = input;
 
     if (isLike) {
@@ -38,6 +41,18 @@ export class PostResolver {
     }
 
     return this.postService.likePost(postId, req.session.userId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Mutation(() => ViewResponse)
+  async view(@Args('input') input: ViewPostInput): Promise<ViewResponse> {
+    return this.postService.viewPost(input);
+  }
+
+  @UseGuards(AuthGuard)
+  @Query(() => PostResponse, { nullable: true, name: 'getPost' })
+  async post(@Args('id') id: number): Promise<PostResponse> {
+    return this.postService.findOne(id);
   }
 
   @ResolveField(() => String)

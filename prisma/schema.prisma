@@ -31,6 +31,7 @@ model Post {
   id         Int         @id @unique @default(autoincrement())
   users      User        @relation(fields: [userId], references: [id])
   title      String      @db.VarChar(255)
+  views      BigInt      @db.BigInt()  @default(0)
   text       String      @db.VarChar(1500)
   userId     Int         @map("user_id")
   createdAt  DateTime    @default(now()) @map("created_at")
