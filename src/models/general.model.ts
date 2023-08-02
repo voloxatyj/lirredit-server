@@ -1,6 +1,8 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql';
+import { Field, Int, ObjectType } from '@nestjs/graphql';
 import { Request, Response } from 'express';
 import { Session, SessionData } from 'express-session';
+import { GraphQLBigInt } from 'graphql-scalars';
+
 
 declare module 'express-session' {
   interface SessionData {
@@ -74,6 +76,9 @@ export class Post {
 
   @Field()
     title!: string;
+
+  @Field(() => GraphQLBigInt)
+    views: bigint;
 
   @Field()
     userId!: number;

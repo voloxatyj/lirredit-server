@@ -1,6 +1,6 @@
 import { ConfigOptions } from 'cloudinary';
 import cloudinary_config from '../config/cloudinary.config';
-import { CLOUDINARY } from '../types/general';
+import { CLOUDINARY } from '../models/general.model';
 
 export const CloudinaryProvider = {
   provide: CLOUDINARY,

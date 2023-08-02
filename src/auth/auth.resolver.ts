@@ -1,9 +1,9 @@
 import { Logger, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
-import { MyContext, User } from 'src/types/general';
-import { ChangePasswordInput, LoginInput, SignUpInput } from 'src/types/request';
-import { PasswordAuthResponse, UserResponse } from 'src/types/response';
+import { MyContext, User } from 'src/models/general.model';
+import { ChangePasswordInput, LoginInput, SignUpInput } from 'src/models/request.model';
+import { PasswordAuthResponse, UserResponse } from 'src/models/response.model';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { AuthService } from './auth.service';
 

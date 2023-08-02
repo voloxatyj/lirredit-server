@@ -1,5 +1,5 @@
-import { CreateUserInput, PostInput } from 'src/types/request';
-import { FieldError } from 'src/types/general';
+import { CreateUserInput, PostInput } from 'src/models/request.model';
+import { FieldError } from 'src/models/general.model';
 
 export const validateRegister = ({ email, password, username }: CreateUserInput) => {
   if (username.length === 0) {

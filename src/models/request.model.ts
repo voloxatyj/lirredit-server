@@ -1,4 +1,5 @@
 import { Field, InputType, Int, PartialType } from '@nestjs/graphql';
+import { GraphQLBigInt } from 'graphql-scalars';
 
 /* USER INPUT TYPES */
 
@@ -92,9 +93,18 @@ export class GetPostsInput {
 
 @InputType()
 export class LikePostInput {
-  @Field(() => Number)
+  @Field(() => Int)
     postId: number;
 
   @Field(() => Boolean)
     isLike: boolean;
+}
+
+@InputType()
+export class ViewPostInput {
+  @Field(() => Int)
+    postId: number;
+
+  @Field(() => GraphQLBigInt)
+    views: bigint;
 }
