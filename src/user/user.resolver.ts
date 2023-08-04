@@ -9,10 +9,9 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { MyContext, User } from 'src/models/general.model';
-import { UpdateUserInput } from 'src/models/request.model';
+import { MyContext } from 'src/models/general.model';
+import { UpdateUserInput, User, UserResponse } from 'src/models/user.model';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
-import { UserResponse } from '../models/response.model';
 import { UserService } from './user.service';
 
 @Resolver(() => User)

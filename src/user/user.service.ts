@@ -1,8 +1,8 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { User } from 'src/models/general.model';
-import { LoginInput, UpdateUserInput } from 'src/models/request.model';
+import { UpdateUserInput, User } from 'src/models/user.model';
+import { LoginInput } from 'src/models/auth.model';
 import { generateUniqueRandom } from 'src/utils/generateUniqueRandom';
 import { verifyingPassword } from 'src/utils/helpers';
 

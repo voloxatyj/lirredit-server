@@ -1,7 +1,6 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType } from '@nestjs/graphql';
 import { Request, Response } from 'express';
 import { Session, SessionData } from 'express-session';
-import { GraphQLBigInt } from 'graphql-scalars';
 
 
 declare module 'express-session' {
@@ -25,109 +24,4 @@ export class FieldError {
     field: string;
   @Field()
     message: string;
-}
-
-@ObjectType()
-export class User {
-  @Field(() => Int)
-    id: number;
-
-  @Field()
-    username!: string;
-
-  @Field()
-    email!: string;
-
-  @Field({ nullable: true })
-    image: string;
-
-  @Field(() => Date)
-    createdAt: Date;
-
-  @Field(() => Date)
-    updatedAt: Date;
-}
-
-@ObjectType()
-export class Image {
-  @Field(() => Int)
-    id: number;
-
-  @Field(() => String)
-    secure_url!: string;
-
-  @Field(() => String)
-    public_id: string;
-
-  @Field(() => Int)
-    postId: number;
-
-  @Field(() => Date)
-    createdAt: Date;
-}
-
-@ObjectType()
-export class Post {
-  @Field(() => Int)
-    id: number;
-
-  @Field()
-    text!: string;
-
-  @Field()
-    title!: string;
-
-  @Field(() => GraphQLBigInt)
-    views: bigint;
-
-  @Field()
-    userId!: number;
-
-  @Field()
-    users!: User;
-
-  @Field(() => [Image])
-    images!: Image[] | [];
-
-  @Field(() => [Comments])
-    comments: Comments[];
-
-  @Field(() => [PostLikes])
-    post_likes: PostLikes[];
-
-  @Field(() => Date)
-    createdAt: Date;
-
-  @Field(() => Date)
-    updatedAt: Date;
-}
-
-@ObjectType()
-export class PostLikes {
-  @Field(() => Int)
-    postId: number;
-
-  @Field(() => Int)
-    userId: number;
-
-  @Field(() => Date)
-    createdAt: Date;
-}
-
-@ObjectType()
-export class Comments {
-  @Field(() => Int)
-    id: number;
-
-  @Field(() => Int)
-    postId: number;
-
-  @Field(() => Int)
-    userId: number;
-
-  @Field(() => Date)
-    createdAt: Date;
-
-  @Field(() => Date)
-    updatedAt: Date;
 }

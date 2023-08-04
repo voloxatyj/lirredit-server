@@ -1,8 +1,17 @@
 import { UseGuards } from '@nestjs/common';
 import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { MyContext, Post } from 'src/models/general.model';
-import { GetPostsInput, LikePostInput, PostInput, ViewPostInput } from 'src/models/request.model';
-import { LikeResponse, PostResponse, PostsResponse, ViewResponse } from 'src/models/response.model';
+import { MyContext } from 'src/models/general.model';
+import {
+  GetPostsInput,
+  LikePostInput,
+  PostInput,
+  ViewPostInput,
+  Post,
+  LikeResponse,
+  PostResponse,
+  PostsResponse,
+  ViewResponse,
+} from 'src/models/post.model';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { PostService } from './post.service';
 

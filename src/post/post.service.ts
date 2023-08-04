@@ -2,8 +2,15 @@ import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common
 import Filter from 'bad-words';
 import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { GetPostsInput, PostInput, ViewPostInput } from 'src/models/request.model';
-import { LikeResponse, PostResponse, PostsResponse, ViewResponse } from 'src/models/response.model';
+import {
+  GetPostsInput,
+  PostInput,
+  ViewPostInput,
+  LikeResponse,
+  PostResponse,
+  PostsResponse,
+  ViewResponse,
+} from 'src/models/post.model';
 import { validateCreatePost } from 'src/utils/validation';
 
 @Injectable()

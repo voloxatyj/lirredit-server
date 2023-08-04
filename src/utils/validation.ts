@@ -1,4 +1,5 @@
-import { CreateUserInput, PostInput } from 'src/models/request.model';
+import { CreateUserInput } from 'src/models/user.model';
+import { PostInput } from 'src/models/post.model';
 import { FieldError } from 'src/models/general.model';
 
 export const validateRegister = ({ email, password, username }: CreateUserInput) => {
