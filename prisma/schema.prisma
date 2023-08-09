@@ -69,6 +69,7 @@ model Image {
 
 model Comments {
   id            Int            @id @unique @default(autoincrement())
+  text          String         @db.VarChar(1500)
   postId        Int            @map("post_id")
   posts         Post           @relation(fields: [postId], references: [id])
   userId        Int            @map("user_id")

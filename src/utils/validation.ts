@@ -1,3 +1,4 @@
+import Filter from 'bad-words';
 import { CreateUserInput } from 'src/models/user.model';
 import { PostInput } from 'src/models/post.model';
 import { FieldError } from 'src/models/general.model';
@@ -106,4 +107,14 @@ export const validateCreatePost = ({ title, text }: Partial<PostInput>): FieldEr
   }
 
   return null;
+};
+
+export const validationText = async (text: string): Promise<string> => {
+  const filter = new Filter();
+
+  filter.addWords('dick', 'penis', 'bitch', 'suck', 'fuck', 'ass', 'hole', 'vagina');
+
+  const edit_text = await filter.clean(text);
+
+  return edit_text;
 };
