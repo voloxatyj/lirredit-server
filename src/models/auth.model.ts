@@ -32,7 +32,7 @@ export class ChangePasswordInput {
 }
 
 @ObjectType()
-export class PasswordAuthResponse {
+export class AuthResponse {
   @Field(() => [FieldError], { nullable: true })
     errors?: FieldError[];
 

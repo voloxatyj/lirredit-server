@@ -5,12 +5,11 @@ import {
   GetPostsInput,
   LikePostInput,
   PostInput,
-  ViewPostInput,
   Post,
   LikeResponse,
   PostResponse,
   PostsResponse,
-  ViewResponse,
+  GetPostInput,
 } from 'src/models/post.model';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { PostService } from './post.service';
@@ -30,7 +29,7 @@ export class PostResolver {
 
   @UseGuards(AuthGuard)
   @Mutation(() => PostResponse)
-  async create(
+  async createPost(
     @Args('input') input: PostInput,
     @Context() { req }: MyContext,
   ): Promise<PostResponse> {
@@ -53,15 +52,9 @@ export class PostResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(() => ViewResponse)
-  async view(@Args('input') input: ViewPostInput): Promise<ViewResponse> {
-    return this.postService.viewPost(input);
-  }
-
-  @UseGuards(AuthGuard)
   @Query(() => PostResponse, { nullable: true, name: 'getPost' })
-  async post(@Args('id') id: number): Promise<PostResponse> {
-    return this.postService.findOne(id);
+  async post(@Args('input') input: GetPostInput): Promise<PostResponse> {
+    return this.postService.findOne(input);
   }
 
   @ResolveField(() => String)

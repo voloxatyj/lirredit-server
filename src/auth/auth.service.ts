@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { ConfigService } from '@nestjs/config';
 import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { ChangePasswordInput, LoginInput, SignUpInput, PasswordAuthResponse } from 'src/models/auth.model';
+import { ChangePasswordInput, LoginInput, SignUpInput, AuthResponse } from 'src/models/auth.model';
 import { UserResponse } from 'src/models/user.model';
 import { hashingPassword, verifyingPassword } from 'src/utils/helpers';
 import { sendEmail } from 'src/utils/sendEmai';
@@ -103,7 +103,7 @@ export class AuthService {
     };
   }
 
-  async forgotPassword(email: string): Promise<PasswordAuthResponse> {
+  async forgotPassword(email: string): Promise<AuthResponse> {
     const is_email_valid = validateEmail({ email });
 
     if (is_email_valid) {

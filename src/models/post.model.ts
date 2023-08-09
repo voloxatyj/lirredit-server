@@ -2,6 +2,8 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { GraphQLBigInt } from 'graphql-scalars';
 import { User } from './user.model';
 import { FieldError } from './general.model';
+import { Comments } from '@prisma/client';
+import { CommentsObject } from './comments.model';
 
 @ObjectType()
 export class Post {
@@ -26,7 +28,7 @@ export class Post {
   @Field(() => [Image])
     images!: Image[] | [];
 
-  @Field(() => [Comments])
+  @Field(() => [CommentsObject])
     comments: Comments[];
 
   @Field(() => [PostLikes])
@@ -51,24 +53,6 @@ export class PostLikes {
     createdAt: Date;
 }
 
-@ObjectType()
-export class Comments {
-  @Field(() => Int)
-    id: number;
-
-  @Field(() => Int)
-    postId: number;
-
-  @Field(() => Int)
-    userId: number;
-
-  @Field(() => Date)
-    createdAt: Date;
-
-  @Field(() => Date)
-    updatedAt: Date;
-}
-
 @InputType()
 export class ImageInput {
   @Field(() => String)
@@ -86,8 +70,8 @@ export class PostInput {
   @Field(() => String)
     text: string;
 
-  @Field(() => [ImageInput])
-    images: ImageInput[];
+  @Field(() => [ImageInput], { nullable: true })
+    images?: ImageInput[];
 }
 
 @InputType()
@@ -115,12 +99,9 @@ export class LikePostInput {
 }
 
 @InputType()
-export class ViewPostInput {
+export class GetPostInput {
   @Field(() => Int)
     postId: number;
-
-  @Field(() => GraphQLBigInt)
-    views: bigint;
 }
 
 @ObjectType()
@@ -180,16 +161,4 @@ export class LikeResponse {
 
   @Field(() => String)
     message: string;
-}
-
-@ObjectType()
-export class ViewResponse {
-  @Field(() => [FieldError], { nullable: true })
-    errors?: FieldError[];
-
-  @Field(() => Boolean)
-    success?: boolean;
-
-  @Field(() => String)
-    message?: string;
 }

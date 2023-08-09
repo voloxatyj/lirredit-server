@@ -1,17 +1,15 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
-import Filter from 'bad-words';
 import { Request } from 'express';
 import { PrismaService } from 'src/prisma/prisma.service';
 import {
   GetPostsInput,
   PostInput,
-  ViewPostInput,
   LikeResponse,
   PostResponse,
   PostsResponse,
-  ViewResponse,
+  GetPostInput,
 } from 'src/models/post.model';
-import { validateCreatePost } from 'src/utils/validation';
+import { validateCreatePost, validationText } from 'src/utils/validation';
 
 @Injectable()
 export class PostService {
@@ -57,12 +55,8 @@ export class PostService {
       return { errors };
     }
 
-    const filter = new Filter();
-
-    filter.addWords('dick', 'penis', 'bitch', 'suck', 'fuck', 'ass', 'hole', 'vagina');
-
-    const edit_title = filter.clean(title);
-    const edit_text = filter.clean(text);
+    const edit_title = await validationText(title);
+    const edit_text = await validationText(text);
 
     const {
       session: { userId },
@@ -88,7 +82,7 @@ export class PostService {
       }
 
       await this.prisma.$transaction(async (prisma) => {
-        response.post = await this.prisma.post.create({
+        response.post = await prisma.post.create({
           data: {
             title: edit_title,
             text: edit_text,
@@ -152,31 +146,32 @@ export class PostService {
     }
   }
 
-  async viewPost({ postId, views }: ViewPostInput): Promise<ViewResponse> {
+  async findOne({ postId } : GetPostInput): Promise<PostResponse> {
+    let post = null;
+    let isLike = null;
+
     try {
-      await this.prisma.post.update({
-        where: { id: postId },
-        data: { views }
+      await this.prisma.$transaction(async (prisma) => {
+        const { views } = await prisma.post.findUnique({
+          where: { id: postId },
+        });
+
+        const updated_views = Number(views) + 1;
+
+        await prisma.post.update({
+          where: { id: postId },
+          data: {
+            views: updated_views,
+          },
+        });
+
+        post = await prisma.post.findUnique({
+          where: { id: postId },
+          include: { users: true, images: true, comments: true, post_likes: true },
+        });
+
+        isLike = post.post_likes.some(({ userId }) => userId === postId);
       });
-
-      return {
-        success: true,
-        message: 'View post successfully',
-      };
-    } catch (error) {
-      this.logger.error(`Can/'t view post`, error.stack);
-      throw new InternalServerErrorException();
-    }
-  }
-
-  async findOne(id: number): Promise<PostResponse> {
-    try {
-      const post = await this.prisma.post.findUnique({
-        where: { id },
-        include: { users: true, images: true, comments: true, post_likes: true },
-      });
-
-      const isLike = post.post_likes.some(({ userId }) => userId === id);
 
       return { post, isLike };
     } catch (error) {

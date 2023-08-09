@@ -2,12 +2,7 @@ import { Logger, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Args, Context, Mutation, Resolver } from '@nestjs/graphql';
 import { MyContext } from 'src/models/general.model';
-import {
-  ChangePasswordInput,
-  LoginInput,
-  SignUpInput,
-  PasswordAuthResponse,
-} from 'src/models/auth.model';
+import { ChangePasswordInput, LoginInput, SignUpInput, AuthResponse } from 'src/models/auth.model';
 import { User, UserResponse } from 'src/models/user.model';
 import { AuthGuard } from 'src/utils/authentication/auth.guard';
 import { AuthService } from './auth.service';
@@ -56,8 +51,8 @@ export class AuthResolver {
   }
 
   @UseGuards(AuthGuard)
-  @Mutation(() => PasswordAuthResponse)
-  async forgotPassword(@Args('email') email: string): Promise<PasswordAuthResponse> {
+  @Mutation(() => AuthResponse)
+  async forgotPassword(@Args('email') email: string): Promise<AuthResponse> {
     return this.authService.forgotPassword(email);
   }
 
