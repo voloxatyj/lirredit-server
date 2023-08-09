@@ -148,7 +148,7 @@ export class PostService {
 
   async findOne({ postId } : GetPostInput): Promise<PostResponse> {
     let post = null;
-    let isLike = null;
+    let isLike: boolean | null = null;
 
     try {
       await this.prisma.$transaction(async (prisma) => {
@@ -170,7 +170,7 @@ export class PostService {
           include: { users: true, images: true, comments: true, post_likes: true },
         });
 
-        isLike = post.post_likes.some(({ userId }) => userId === postId);
+        isLike = post.post_likes.some(like => like.postId === postId);
       });
 
       return { post, isLike };
