@@ -3,7 +3,7 @@ import { GraphQLBigInt } from 'graphql-scalars';
 import { User } from './user.model';
 import { FieldError } from './general.model';
 import { Comments } from '@prisma/client';
-import { CommentsObject } from './comments.model';
+import { CommentObject } from './comment.model';
 
 @ObjectType()
 export class Post {
@@ -25,10 +25,10 @@ export class Post {
   @Field()
     users!: User;
 
-  @Field(() => [Image])
+  @Field(() => [Image], { nullable: true })
     images!: Image[] | [];
 
-  @Field(() => [CommentsObject])
+  @Field(() => [CommentObject])
     comments: Comments[];
 
   @Field(() => [PostLikes])

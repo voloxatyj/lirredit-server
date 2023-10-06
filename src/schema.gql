@@ -2,17 +2,53 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type AuthResponse {
+  errors: [FieldError!]
+  success: Boolean!
+}
+
+"""
+The `BigInt` scalar type represents non-fractional signed whole numeric values.
+"""
+scalar BigInt
+
 input ChangePasswordInput {
   password: String!
   token: String!
 }
 
-type Comments {
+input CommentInput {
+  postId: Int!
+  text: String!
+}
+
+type CommentObject {
+  commentId: Int
   createdAt: DateTime!
   id: Int!
+  images: [Image!]
   postId: Int!
+  text: String!
   updatedAt: DateTime!
   userId: Int!
+  users: User!
+  views: BigInt!
+}
+
+type CommentResponse {
+  comment: CommentObject!
+  errors: [FieldError!]
+  success: Boolean!
+}
+
+input CommentsInput {
+  postId: Int!
+}
+
+type CommentsResponse {
+  comments: [CommentObject!]!
+  errors: [FieldError!]
+  success: Boolean!
 }
 
 """
@@ -23,6 +59,10 @@ scalar DateTime
 type FieldError {
   field: String!
   message: String!
+}
+
+input GetPostInput {
+  postId: Int!
 }
 
 input GetPostsInput {
@@ -47,7 +87,7 @@ input ImageInput {
 
 input LikePostInput {
   isLike: Boolean!
-  postId: Float!
+  postId: Int!
 }
 
 type LikeResponse {
@@ -63,8 +103,9 @@ input LoginInput {
 
 type Mutation {
   changePassword(credentials: ChangePasswordInput!): UserResponse!
-  create(input: PostInput!): PostResponse!
-  forgotPassword(email: String!): PasswordAuthResponse!
+  createComment(input: CommentInput!): CommentResponse!
+  createPost(input: PostInput!): PostResponse!
+  forgotPassword(email: String!): AuthResponse!
   like(input: LikePostInput!): LikeResponse!
   login(credentials: LoginInput!): UserResponse!
   logout: Boolean!
@@ -73,17 +114,12 @@ type Mutation {
   updateUser(updateUserInput: UpdateUserInput!): User!
 }
 
-type PasswordAuthResponse {
-  errors: [FieldError!]
-  success: Boolean!
-}
-
 type Post {
-  comments: [Comments!]!
+  comments: [CommentObject!]!
   comments_count: String!
   createdAt: DateTime!
   id: Int!
-  images: [Image!]!
+  images: [Image!]
   likes_count: String!
   post_likes: [PostLikes!]!
   short_text: String!
@@ -92,10 +128,11 @@ type Post {
   updatedAt: DateTime!
   userId: Float!
   users: User!
+  views: BigInt!
 }
 
 input PostInput {
-  images: [ImageInput!]!
+  images: [ImageInput!]
   text: String!
   title: String!
 }
@@ -108,6 +145,7 @@ type PostLikes {
 
 type PostResponse {
   errors: [FieldError!]
+  isLike: Boolean!
   post: Post
 }
 
@@ -120,6 +158,8 @@ type PostsResponse {
 type Query {
   findOne(email: String!): UserResponse!
   findUsers: [User!]!
+  getComments(input: CommentsInput!): CommentsResponse!
+  getPost(input: GetPostInput!): PostResponse
   getPosts(input: GetPostsInput!): PostsResponse!
   getUser: User
 }

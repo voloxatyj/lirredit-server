@@ -11,7 +11,7 @@ import { PassportModule } from '@nestjs/passport';
 import { PostModule } from './post/post.module';
 import { appConfig } from './config/app.config';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
-import { CommentsModule } from './comments/comments.module';
+import { CommentModule } from './comments/comment.module';
 
 @Module({
   imports: [
@@ -40,7 +40,7 @@ import { CommentsModule } from './comments/comments.module';
     AuthModule,
     PostModule,
     CloudinaryModule,
-    CommentsModule,
+    CommentModule,
   ],
   controllers: [],
   providers: [],

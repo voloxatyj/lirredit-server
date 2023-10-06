@@ -1,16 +1,16 @@
 import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { Comments, User } from '@prisma/client';
-import { CommentsInput, CommentResponse, CommentsResponse } from 'src/models/comments.model';
+import { CommentsInput, CommentResponse, CommentsResponse, CommentInput } from 'src/models/comment.model';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { validationText } from 'src/utils/validation';
 
 @Injectable()
-export class CommentsService {
-  private logger = new Logger(CommentsService.name);
+export class CommentService {
+  private logger = new Logger(CommentService.name);
 
   constructor(private prisma: PrismaService) {}
 
-  async createComment({ postId, text }: CommentsInput, userId: number): Promise<CommentResponse> {
+  async create({ postId, text }: CommentInput, userId: number): Promise<CommentResponse> {
     try {
       const validateText = await validationText(text);
       const comment: Comments & { users: User } = await this.prisma.comments.create({
@@ -34,7 +34,7 @@ export class CommentsService {
     }
   }
 
-  async getAll(postId: number): Promise<CommentsResponse> {
+  async getAll({ postId }: CommentsInput): Promise<CommentsResponse> {
     try {
       const comments: (Comments & { users: User })[] = await this.prisma.comments.findMany({
         where: {

@@ -2,9 +2,11 @@ import { Field, InputType, Int, ObjectType } from '@nestjs/graphql';
 import { User } from './user.model';
 import { FieldError } from './general.model';
 import { Comments } from '@prisma/client';
+import { GraphQLBigInt } from 'graphql-scalars';
+import { Image } from './post.model';
 
 @ObjectType()
-export class CommentsObject {
+export class CommentObject {
   @Field(() => Int)
     id: number;
 
@@ -17,7 +19,13 @@ export class CommentsObject {
   @Field(() => Int)
     userId!: number;
 
-  @Field(() => Int)
+  @Field(() => GraphQLBigInt)
+    views: bigint;
+
+  @Field(() => [Image], { nullable: true })
+    images!: Image[] | [];
+
+  @Field(() => Int, { nullable: true })
     commentId: number;
 
   @Field()
@@ -56,7 +64,7 @@ export class CommentResponse {
   @Field(() => Boolean)
     success: boolean;
 
-  @Field(() => CommentsObject)
+  @Field(() => CommentObject)
     comment: Comments & { users: User };
 }
 
@@ -68,17 +76,23 @@ export class CommentsResponse {
   @Field(() => Boolean)
     success: boolean;
 
-  @Field(() => [CommentsObject])
+  @Field(() => [CommentObject])
     comments: (Comments & {
     users: User;
   })[];
 }
 
 @InputType()
-export class CommentsInput {
+export class CommentInput {
   @Field()
     text: string;
 
+  @Field(() => Int)
+    postId: number;
+}
+
+@InputType()
+export class CommentsInput {
   @Field(() => Int)
     postId: number;
 }

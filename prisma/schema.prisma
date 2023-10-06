@@ -31,7 +31,7 @@ model Post {
   id         Int         @id @unique @default(autoincrement())
   users      User        @relation(fields: [userId], references: [id])
   title      String      @db.VarChar(255)
-  views      BigInt      @db.BigInt()  @default(0)
+  views      BigInt      @default(0) @db.BigInt()
   text       String      @db.VarChar(1500)
   userId     Int         @map("user_id")
   createdAt  DateTime    @default(now()) @map("created_at")
@@ -57,12 +57,14 @@ model Follows {
 }
 
 model Image {
-  id         Int      @id @unique @default(autoincrement())
-  posts      Post     @relation(fields: [postId], references: [id])
-  secure_url String   @db.VarChar()
-  public_id  String   @db.VarChar()
-  postId     Int      @map("post_id")
-  createdAt  DateTime @default(now()) @map("created_at")
+  id         Int       @id @unique @default(autoincrement())
+  posts      Post      @relation(fields: [postId], references: [id])
+  secure_url String    @db.VarChar()
+  public_id  String    @db.VarChar()
+  postId     Int       @map("post_id")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  comments   Comments? @relation(fields: [commentsId], references: [id])
+  commentsId Int?
 
   @@map("pictures")
 }
@@ -70,6 +72,8 @@ model Image {
 model Comments {
   id            Int            @id @unique @default(autoincrement())
   text          String         @db.VarChar(1500)
+  views         BigInt         @default(0) @db.BigInt()
+  images        Image[]
   postId        Int            @map("post_id")
   posts         Post           @relation(fields: [postId], references: [id])
   userId        Int            @map("user_id")
